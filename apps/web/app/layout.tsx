@@ -1,30 +1,50 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import QueryClientProvider from '@/components/query-client-provider'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
+import '@workspace/ui/globals.css'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 
-import "@workspace/ui/globals.css"
-import { Providers } from "@/components/providers"
-
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
+const geistSans = Geist({
+	variable: '--font-geist-sans',
+	subsets: ['latin'],
 })
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+const geistMono = Geist_Mono({
+	variable: '--font-geist-mono',
+	subsets: ['latin'],
 })
+
+export const metadata: Metadata = {
+	icons: {
+		icon: '/logo.svg',
+	},
+}
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode
+	children: React.ReactNode
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
-      >
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
+	return (
+		<html
+			lang='en'
+			suppressHydrationWarning
+			suppressContentEditableWarning
+		>
+			<body
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+			>
+				<ThemeProvider
+					attribute='class'
+					disableTransitionOnChange
+				>
+					<QueryClientProvider>
+						{children}
+						<Toaster />
+					</QueryClientProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	)
 }
