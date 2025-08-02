@@ -1,4 +1,3 @@
-import QueryClientProvider from '@/components/query-client-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import '@workspace/ui/globals.css'
@@ -39,10 +38,8 @@ export default function RootLayout({
 					attribute='class'
 					disableTransitionOnChange
 				>
-					<QueryClientProvider>
-						{children}
-						<Toaster />
-					</QueryClientProvider>
+					{children}
+					<Toaster />
 				</ThemeProvider>
 			</body>
 		</html>
