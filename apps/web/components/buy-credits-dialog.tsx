@@ -1,13 +1,19 @@
 'use client'
 
+import { ArrowRight, TrendingUp } from 'lucide-react'
+import { useState } from 'react'
+import { useForm, useFormContext } from 'react-hook-form'
+import { z } from 'zod'
+
 import offersData from '@/dictionaries/offers-data'
-import onChooseOffer from '@/event-handlers/on-choose-offer'
 import offerIdSchema, {
 	CREDITS_150,
 	CREDITS_25,
 	CREDITS_50,
-} from '@/schemas/offerId'
+} from '@/schemas/offer-id'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import createPreference from '@/actions/create-preference'
 import { Button } from '@workspace/ui/components/button'
 import {
 	Dialog,
@@ -25,13 +31,8 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
 } from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
-import { ArrowRight, Coins, TrendingUp } from 'lucide-react'
-import { useState } from 'react'
-import { useForm, useFormContext } from 'react-hook-form'
-import { z } from 'zod'
 
 const offerSchema = z.object({
 	id: offerIdSchema,
@@ -52,7 +53,7 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 	})
 
 	const onSubmit = (offer: z.infer<typeof offerSchema>) => {
-		onChooseOffer(offer.id)
+		createPreference(offer.id)
 	}
 
 	const onCheckOffer = (offerId: z.infer<typeof offerSchema>['id']) => {

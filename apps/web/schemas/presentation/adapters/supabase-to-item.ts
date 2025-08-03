@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { supabasePresentationSchema } from '..'
+
+import { supabasePresentationSchema } from '@/schemas/presentation'
 
 interface PresentationItem {
 	id: string

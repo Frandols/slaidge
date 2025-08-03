@@ -48,6 +48,6 @@ export default async function PresentationsPage() {
 			</div>
 		)
 	} catch (error) {
-		redirect('/api/access-tokens?redirect_path=/presentations')
+		redirect('/log-in')
 	}
 }

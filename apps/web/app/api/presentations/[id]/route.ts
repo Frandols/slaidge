@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import createSupabaseClient from '@/clients/factories/supabase'
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
-import withTokenRefreshIfUnauthenticated from '@/decorators/with-token-refresh-if-unauthenticated'
 import requireAccessToken from '@/guards/require-access-token'
 import { APIPresentationSchema } from '@/schemas/presentation'
 import APIToAppPresentationAdapter from '@/schemas/presentation/adapters/api-to-app'
@@ -59,12 +58,7 @@ async function getPresentation(
 	return NextResponse.json(presentation)
 }
 
-export const GET = await withNextResponseJsonError(
-	withTokenRefreshIfUnauthenticated(
-		getPresentation,
-		({ id }) => `/api/presentations/${id}`
-	)
-)
+export const GET = await withNextResponseJsonError(getPresentation)
 
 async function patchPresentation(
 	request: NextRequest,

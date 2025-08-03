@@ -23,7 +23,7 @@ const elementSettingsCoreSchema = z.object({
 					message: 'Index start can not be greater than index end',
 				})
 				.describe(
-					'A tuple where the first element is the row where the element starts, and the second one the row where the element ends'
+					'A tuple where the first element is the row where the element starts (1 minumum, 2 maximum), and the second one the row where the element ends (1 minumum, 2 maximum)'
 				),
 			z.number().min(1).max(2),
 		])
@@ -31,7 +31,7 @@ const elementSettingsCoreSchema = z.object({
 			message: 'Index end can not be greater than the amount of rows',
 		})
 		.describe(
-			'A tuple where the first element is a tuple that specifies the rows where the element starts and ends, and the second one specifies the amount of rows. For example: [[1, 2], 2] -> Element uses rows 1 and 2, in a grid of two rows'
+			'A tuple where the first element is a tuple that specifies the rows where the element starts and ends, and the second one specifies the amount of rows (1 minumum, 2 maximum). For example: [[1, 2], 2] -> Element uses rows 1 and 2, in a grid of two rows'
 		),
 	col: z
 		.tuple([
@@ -41,7 +41,7 @@ const elementSettingsCoreSchema = z.object({
 					message: 'Index start can not be greater than index end',
 				})
 				.describe(
-					'A tuple where the first element is the column where the element starts, and the second one the column where the element ends'
+					'A tuple where the first element is the column where the element starts (1 minumum, 3 maximum), and the second one the column where the element ends (1 minumum, 3 maximum)'
 				),
 			z.number().min(1).max(3),
 		])
@@ -49,13 +49,17 @@ const elementSettingsCoreSchema = z.object({
 			message: 'Index end can not be greater than the amount of columns',
 		})
 		.describe(
-			'A tuple where the first element is a tuple that specifies the columns where the element starts and ends, and the second one specifies the amount of columns. For example: [[1, 2], 3] -> Element uses column 1 and 2, in a grid of three columns'
+			'A tuple where the first element is a tuple that specifies the columns where the element starts and ends, and the second one specifies the amount of columns (1 minumum, 3 maximum). For example: [[1, 2], 3] -> Element uses column 1 and 2, in a grid of three columns'
 		),
 })
 
 export const textElementSettingsSchema = elementSettingsCoreSchema.extend({
 	type: z.literal('text'),
-	content: z.string().min(1).max(300).describe('Content of the text'),
+	content: z
+		.string()
+		.min(1)
+		.max(300)
+		.describe('Content of the text, 300 characters maximum'),
 	style: styleSettingsSchema.optional(),
 	background: backgroundSettingsSchema.optional(),
 })
@@ -68,7 +72,11 @@ const imageElementSettingsSchema = elementSettingsCoreSchema.extend({
 const chartElementSettingsSchema = elementSettingsCoreSchema.extend({
 	type: z.literal('chart'),
 	chartType: z.enum(['BAR', 'LINE', 'PIE']).describe('Type of chart'),
-	title: z.string().min(1).max(100).describe('Title of the chart'),
+	title: z
+		.string()
+		.min(1)
+		.max(50)
+		.describe('Title of the chart, 50 characters maximum'),
 	data: z
 		.array(
 			z.object({

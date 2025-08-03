@@ -9,13 +9,21 @@ export const createSectionOpeningSlideParamsSchema = z.object({
 	id: z.string().min(1).describe('ID of the slide'),
 	title: z.object({
 		id: z.string().min(1).describe('ID of the title text box'),
-		content: z.string().min(1).max(30).describe('Content of the title'),
+		content: z
+			.string()
+			.min(1)
+			.max(50)
+			.describe('Content of the title, 50 characters maximum'),
 		style: styleSettingsSchema.omit({ italic: true, bold: true }).optional(),
 	}),
 	subtitle: z
 		.object({
 			id: z.string().min(1).describe('ID of the subtitle text box'),
-			content: z.string().min(1).max(50).describe('Content of the subtitle'),
+			content: z
+				.string()
+				.min(1)
+				.max(50)
+				.describe('Content of the subtitle, 50 characters maximum'),
 			style: styleSettingsSchema.omit({ italic: true, bold: true }).optional(),
 		})
 		.optional(),

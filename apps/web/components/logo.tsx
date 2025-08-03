@@ -16,6 +16,7 @@ export default function Logo({ size = 40 }: LogoProps) {
 				alt='Slaidge logo'
 				width={size}
 				height={size}
+				unoptimized
 			/>
 		</Link>
 	)

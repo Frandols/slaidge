@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Politica de privacidad | Slaidge',
+	title: 'Política de privacidad | Slaidge',
 	description:
 		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
 }

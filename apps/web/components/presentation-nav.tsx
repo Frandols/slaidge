@@ -29,6 +29,7 @@ export default function PresentationNav(props: PresentationNavProps) {
 						alt={'Slide thumbnail'}
 						layout='fill'
 						className='rounded'
+						unoptimized
 					/>
 				</Link>
 			))}

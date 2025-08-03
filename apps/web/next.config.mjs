@@ -4,7 +4,6 @@ const nextConfig = {
 	images: {
 		remotePatterns: [new URL('https://lh3.googleusercontent.com/a/**')],
 	},
-	cacheMaxMemorySize: 0,
 }
 
 export default nextConfig

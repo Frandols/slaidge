@@ -1,3 +1,5 @@
+'use server'
+
 import createSupabaseClient from '@/clients/factories/supabase'
 
 /**

@@ -6,7 +6,7 @@ import { cookies } from 'next/headers'
 import mercadopago from '@/clients/mercadopago'
 import offersData from '@/dictionaries/offers-data'
 import requireAccessToken from '@/guards/require-access-token'
-import offerIdSchema from '@/schemas/offerId'
+import offerIdSchema from '@/schemas/offer-id'
 import getUserProfile from '@/services/google/get-user-profile'
 import { redirect } from 'next/navigation'
 
@@ -33,7 +33,7 @@ export default async function createPreference(
 			items: [
 				{
 					id: validOfferId,
-					title: `${offersData[validOfferId].amount} creditos en Slaidge para ${userProfile.name}`,
+					title: `${offersData[validOfferId].amount} créditos en Slaidge para ${userProfile.name}`,
 					quantity: 1,
 					unit_price: offersData[validOfferId].price,
 					currency_id: 'USD',

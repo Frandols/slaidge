@@ -6,7 +6,7 @@ import createSupabaseClient from '@/clients/factories/supabase'
 import mercadopago from '@/clients/mercadopago'
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import offersData from '@/dictionaries/offers-data'
-import offerIdSchema from '@/schemas/offerId'
+import offerIdSchema from '@/schemas/offer-id'
 
 const bodySchema = z.object({
 	data: z.object({

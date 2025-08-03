@@ -32,6 +32,7 @@ export default function PresentationItem(props: PresentationItemProps) {
 						layout='fill'
 						className='aspect-video bg-background rounded-lg'
 						objectFit='contain'
+						unoptimized
 					/>
 				</div>
 				<div className='flex flex-col gap-2 p-2'>

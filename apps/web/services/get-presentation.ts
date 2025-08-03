@@ -1,7 +1,5 @@
 'use client'
 
-import getBaseURL from '@/utils/get-base-url'
-
 interface Presentation {
 	id: string
 	title: string
@@ -23,9 +21,7 @@ interface Presentation {
 export default async function getPresentation(
 	presentationId: string
 ): Promise<Presentation> {
-	const response = await fetch(
-		`${getBaseURL()}/api/presentations/${presentationId}`
-	)
+	const response = await fetch(`/api/presentations/${presentationId}`)
 
 	const data = await response.json()
 

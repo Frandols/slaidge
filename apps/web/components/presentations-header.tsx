@@ -61,6 +61,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 								width={20}
 								height={20}
 								className='rounded-full min-w-[20px] min-h-[20px]'
+								unoptimized
 							/>
 							<p className='text-muted-foreground hidden text-nowrap md:block'>
 								Presentaciones de {props.user.name.split(' ')[0]}
@@ -85,6 +86,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 							width={20}
 							height={20}
 							className='rounded-full min-w-[20px] min-h-[20px]'
+							unoptimized
 						/>
 						<p className='text-muted-foreground hidden text-nowrap md:block'>
 							Presentaciones de {props.user.name.split(' ')[0]}
@@ -105,7 +107,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 					</PopoverContent>
 				</Popover>
 				<Link
-					href={'https://github.com/Frandols/Slaidge'}
+					href={'https://github.com/Frandols/slaidge'}
 					target='_blank'
 					rel='noreferrer'
 				>
@@ -115,6 +117,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 							alt='GitHub logo'
 							width={16}
 							height={16}
+							unoptimized
 						/>
 						GitHub
 					</Button>

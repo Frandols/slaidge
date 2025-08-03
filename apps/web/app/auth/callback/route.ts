@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const NEXT_PUBLIC_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
-const REDIRECT_URI = 'http://localhost:3000/auth/callback'
+const REDIRECT_URI = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
 
 export async function GET(req: NextRequest) {
 	const url = new URL(req.url)
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'lax',
-				path: '/api/access-tokens',
+				path: '/',
 				maxAge: 60 * 60 * 24 * 30,
 			})
 		}

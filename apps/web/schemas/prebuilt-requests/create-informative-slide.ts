@@ -11,8 +11,8 @@ export const createInformativeSlideParamsSchema = z.object({
 		content: z
 			.string()
 			.min(1)
-			.max(30)
-			.describe('Content of the title, 30 characters maximum.'),
+			.max(50)
+			.describe('Content of the title, 50 characters maximum.'),
 		style: styleSettingsSchema.omit({ bold: true }).optional(),
 	}),
 	footer: z.object({

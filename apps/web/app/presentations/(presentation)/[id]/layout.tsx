@@ -94,6 +94,6 @@ export default async function PresentationLayout({
 			</Toggling>
 		)
 	} catch {
-		redirect(`/api/access-tokens?redirect_path=/presentations/${id}`)
+		redirect('/log-in')
 	}
 }

@@ -1,16 +1,13 @@
 'use client'
 
-import TextPrompt from '@/components/text-prompt'
-import createPresentation from '@/services/create-presentation'
-import {
-	Dialog,
-	DialogContent,
-	DialogTitle,
-} from '@workspace/ui/components/dialog'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import ContinueWithGoogleButton from './continue-with-google-button'
+
+import ConnectYourAccountDialog from '@/components/connect-your-account-dialog'
+import TextPrompt from '@/components/text-prompt'
+import createPresentation from '@/services/create-presentation'
+import { fa } from 'zod/v4/locales'
 
 interface CreatePresentationPromptProps extends React.PropsWithChildren {
 	creditBalance?: number
@@ -55,14 +52,23 @@ export default function CreatePresentationPrompt(
 
 			navigation.push(`/presentations/${result.presentationId}`)
 		} catch (error) {
-			if (error instanceof Error && error.message === 'UNAUTHENTICATED') {
+			if (!(error instanceof Error)) return
+
+			if (error.message === 'UNAUTHENTICATED') {
 				showDialog()
+
+				return
+			}
+
+			if (error.message === 'signal is aborted without reason') {
+				toast.success('Se frenó la creación')
 
 				return
 			}
 
 			toast.error('Lo sentimos, ocurrió un error al crear la presentación')
 		} finally {
+			setSubmitting(false)
 			toast.dismiss(creatingPresentationToastId)
 		}
 
@@ -79,24 +85,19 @@ export default function CreatePresentationPrompt(
 
 	return (
 		<>
-			<Dialog
+			<ConnectYourAccountDialog
 				open={isDialogVisible}
 				onOpenChange={setIsDialogVisible}
 			>
-				<DialogContent className='w-96'>
-					<DialogTitle>Conecta tu cuenta</DialogTitle>
-					<p className='text-muted-foreground text-sm'>
-						Necesitamos poder agregar las presentaciones que crees a tu
-						almacenamiento de Google Slides.
-					</p>
-					<ContinueWithGoogleButton />
-				</DialogContent>
-			</Dialog>
+				Necesitamos poder agregar las presentaciones que crees a tu
+				almacenamiento de Google Slides.
+			</ConnectYourAccountDialog>
 			<TextPrompt
 				value={text}
 				onChange={onChange}
 				onSubmit={onSubmit}
-				showStop={submitting}
+				showStop={false}
+				disabled={submitting}
 				onStop={onStop}
 				placeholder='Crea una presentacion sobre '
 				placeholders={[

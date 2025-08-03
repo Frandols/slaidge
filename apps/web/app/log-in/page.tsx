@@ -17,13 +17,13 @@ export default async function LogInPage() {
 				<p className='text-muted-foreground text-sm'>
 					Slaidge podra crear presentaciones por ti y modificar unica y
 					exclusivamente aquellas presentaciones que fueron creadas a traves de
-					la aplicacion.
+					la aplicación.
 				</p>
 				<Link
 					href={'/terms-and-conditions'}
 					className='underline text-muted-foreground text-sm w-min text-nowrap'
 				>
-					Terminos y condiciones
+					Términos y condiciones
 					<ArrowRight
 						className='inline ml-2'
 						size={16}

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Terminos y condiciones | Slaidge',
+	title: 'Términos y condiciones | Slaidge',
 	description:
 		'Slaidge que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
 }
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function TermsAndConditionsPage() {
 	return (
 		<>
-			<h1 className='text-3xl font-medium pb-6'>Terminos y Condiciones</h1>
+			<h1 className='text-3xl font-medium pb-6'>Términos y Condiciones</h1>
 			<p className='leading-relaxed'>
 				1. Introducción
 				<br /> Al utilizar esta aplicación Slaidge confirmas tu aceptación y te

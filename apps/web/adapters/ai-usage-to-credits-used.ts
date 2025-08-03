@@ -1,5 +1,5 @@
-const INPUT_TOKENS_PER_CREDIT = 37500
-const OUTPUT_TOKENS_PER_CREDIT = 7500
+const INPUT_TOKENS_PER_CREDIT = Number(process.env.INPUT_TOKENS_PER_CREDIT)
+const OUTPUT_TOKENS_PER_CREDIT = Number(process.env.OUTPUT_TOKENS_PER_CREDIT)
 
 /**
  * Get the total usage of credits.
@@ -7,7 +7,7 @@ const OUTPUT_TOKENS_PER_CREDIT = 7500
  * @param usage Usage object.
  * @returns Total credits used.
  */
-export default function getCreditsUsed(usage: {
+export default function AIUsageToCreditsUsed(usage: {
 	promptTokens: number
 	completionTokens: number
 }): number {

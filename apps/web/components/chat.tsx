@@ -1,22 +1,24 @@
 'use client'
 
+import { Message, useChat } from '@ai-sdk/react'
+import { Loader2Icon, Wrench } from 'lucide-react'
+import Image from 'next/image'
+import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
+
+import BuyCreditsDialog from '@/components/buy-credits-dialog'
+import { Markdown } from '@/components/markdown'
+import TextPrompt from '@/components/text-prompt'
 import { useCreditBalance } from '@/contexts/credit-balance'
 import { useLastEditionTime } from '@/contexts/last-edition-time'
 import { useSlides } from '@/contexts/slides'
 import getCreditBalance from '@/services/get-credit-balance'
 import getPresentation from '@/services/get-presentation'
 import sanitizeText from '@/utils/sanitize-text'
-import { Message, useChat } from '@ai-sdk/react'
-import { Loader2Icon, Wrench } from 'lucide-react'
-import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
-import BuyCreditsDialog from './buy-credits-dialog'
-import { Markdown } from './markdown'
-import TextPrompt from './text-prompt'
 
 const toolNames: Record<string, string> = {
-	updatePresentation: 'Actualizar presentacion',
+	updatePresentation: 'Actualizar la presentación',
+	getPresentationProperty: 'Acceder a la presentación',
 }
 
 interface ChatProps extends React.PropsWithChildren {
@@ -94,8 +96,8 @@ export default function Chat(props: ChatProps) {
 					props.children
 				) : messages.length === 0 ? (
 					<div className='h-full grid place-content-center text-center'>
-						<p className='font-bold text-2xl'>¿En que te puedo ayudar?</p>
-						<p className='text-muted-foreground'>Inicia la conversacion</p>
+						<p className='font-bold text-2xl'>¿En qué te puedo ayudar?</p>
+						<p className='text-muted-foreground'>Iniciá la conversación</p>
 					</div>
 				) : null}
 				{messages.map((message) => {
@@ -179,6 +181,7 @@ function SystemMessageMark() {
 				alt='Slaidge logo'
 				width={20}
 				height={20}
+				unoptimized
 			/>
 			<p className='font-semibold'>Slaidge</p>
 		</div>

@@ -35,6 +35,7 @@ export default function UserMenu(props: UserMenuProps) {
 						className='rounded-full'
 						layout='fill'
 						objectFit='contain'
+						unoptimized
 					/>
 				</Button>
 			</DropdownMenuTrigger>
@@ -51,7 +52,7 @@ export default function UserMenu(props: UserMenuProps) {
 						<span className='bg-primary rounded p-1 mr-2'>
 							<Coins className='text-black' />
 						</span>
-						{props.creditBalance} creditos
+						{props.creditBalance} créditos
 					</p>
 					<BuyCreditsDialog currentCreditBalance={props.creditBalance}>
 						<DialogTrigger asChild>
@@ -59,7 +60,7 @@ export default function UserMenu(props: UserMenuProps) {
 								variant='outline'
 								className='w-full'
 							>
-								Comprar creditos
+								Comprar créditos
 								<HandCoins />
 							</Button>
 						</DialogTrigger>

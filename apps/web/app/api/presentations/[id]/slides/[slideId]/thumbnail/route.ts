@@ -36,7 +36,7 @@ export async function getThumbnailImageResponse(
 
 async function getThumbnail(
 	request: NextRequest,
-	{ params }: { params: { id: string; slideId: string } }
+	{ params }: { params: Promise<{ id: string; slideId: string }> }
 ) {
 	const accessToken = await requireAccessToken(request.cookies)
 

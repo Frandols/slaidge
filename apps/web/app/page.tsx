@@ -12,6 +12,7 @@ import requireAccessToken from '@/guards/require-access-token'
 import getUserProfile from '@/services/google/get-user-profile'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 import getUserPresentations from '@/services/supabase/get-user-presentations'
+
 import { Badge } from '@workspace/ui/components/badge'
 import {
 	Tooltip,
@@ -20,7 +21,7 @@ import {
 } from '@workspace/ui/components/tooltip'
 
 export const metadata: Metadata = {
-	title: 'Construye tu presentacion con IA, en minutos | Slaidge',
+	title: 'Construye tu presentación con IA, en minutos | Slaidge',
 	description:
 		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
 }
@@ -53,7 +54,7 @@ export default async function HomePage() {
 					<h2 className='font-medium'>Slaidge</h2>
 					<Tooltip>
 						<TooltipContent side='bottom'>
-							Pueden ocurrir errores durante el uso de la aplicacion, comunicate
+							Pueden ocurrir errores durante el uso de la aplicación, comunicate
 							con soporte de ser necesario
 						</TooltipContent>
 						<TooltipTrigger>
@@ -63,20 +64,21 @@ export default async function HomePage() {
 				</div>
 				<ul className='flex gap-6 items-center'>
 					<li className='hover:underline'>
-						<Link href='#'>Demo</Link>
-					</li>
-					<li className='hover:underline'>
-						<Link href='#'>Precios</Link>
+						<Link href='#pricing'>Precios</Link>
 					</li>
 					{userProfile ? (
-						<li>
+						<li className='grid place-content-center'>
 							<UserMenu
 								name={userProfile.name}
 								avatar={userProfile.avatarUrl}
 								creditBalance={userProfile.creditBalance}
 							/>
 						</li>
-					) : null}
+					) : (
+						<li>
+							<LinkBadge href={'/log-in'}>Ingresar</LinkBadge>
+						</li>
+					)}
 				</ul>
 			</header>
 			<main className='max-w-7xl mx-auto py-8 px-8 flex flex-col items-center border-x border-b pb-24 border-dashed'>
@@ -91,7 +93,7 @@ export default async function HomePage() {
 						</p>
 					</div>
 					<h1 className='text-center font-extrabold text-4xl lg:text-6xl'>
-						Construye tu presentacion con IA,{' '}
+						Construye tu presentación con IA,{' '}
 						<span className='relative whitespace-nowrap'>
 							<div className='absolute bg-primary h-[75%] -left-2 top-2 -bottom-1 -right-2 md:-left-3 md:top-2.125 lg:top-3 md:-bottom-0 md:-right-3 -rotate-1'></div>
 							<span className='text-black relative'>en minutos</span>
@@ -102,7 +104,7 @@ export default async function HomePage() {
 						<span className='text-accent-foreground'>
 							inteligencia artificial
 						</span>{' '}
-						en tiempos record
+						en tiempos récord
 					</p>
 				</div>
 				<div className='max-w-3xl w-full h-[125px] md:h-[175px]'>
@@ -116,7 +118,7 @@ export default async function HomePage() {
 					<div className='max-w-7xl mx-auto px-8 border-x border-b border-dashed py-8'>
 						<div className='w-full border border-dashed rounded-lg'>
 							<div className='flex gap-2 items-center flex-wrap border-b border-dashed p-4'>
-								<h2 className='text-2xl font-bold'>
+								<h2 className='text-xl md:text-2xl font-bold'>
 									Presentaciones de {userProfile.name.split(' ')[0]}
 								</h2>
 								<LinkBadge href='/presentations'>
@@ -133,9 +135,12 @@ export default async function HomePage() {
 					Precios
 				</h2>
 				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
-					Paga solo por lo que usas
+					Pagá solo por lo que usas
 				</p>
-				<div className='flex flex-wrap justify-center gap-8 w-full'>
+				<div
+					id='pricing'
+					className='flex flex-wrap justify-center gap-8 w-full'
+				>
 					<PricingCard
 						offerId='credits-25'
 						title='Corto plazo'
@@ -144,9 +149,9 @@ export default async function HomePage() {
 						description='Ideal si necesitas terminar algo ya'
 						suggestion='Prueba el producto con una inversion minima'
 						features={[
-							'Edita tu presentacion con IA',
-							'Tendras tu presentacion en tu Google Slides siempre',
-							'Los creditos nunca expiran',
+							'Edita tu presentación con IA',
+							'Tendrás tu presentación en tu Google Slides siempre',
+							'Los créditos nunca expiran',
 							'Soporte via Discord o email',
 							'Perfecto para probar el producto',
 						]}
@@ -160,9 +165,9 @@ export default async function HomePage() {
 						description='Si te queda buen trabajo por delante'
 						suggestion='El mejor valor para la mayoria de usuarios'
 						features={[
-							'Edita tu presentacion con IA',
-							'Tendras tu presentacion en tu Google Slides siempre',
-							'Los creditos nunca expiran',
+							'Edita tu presentación con IA',
+							'Tendrás tu presentación en tu Google Slides siempre',
+							'Los créditos nunca expiran',
 							'Soporte via Discord o email',
 							'Mejor valor para usuarios regulares',
 						]}
@@ -176,9 +181,9 @@ export default async function HomePage() {
 						description='Para trabajos muy largos o equipos'
 						suggestion='Para necesidades de alto volumen'
 						features={[
-							'Edita tu presentacion con IA',
-							'Tendras tu presentacion en tu Google Slides siempre',
-							'Los creditos nunca expiran',
+							'Edita tu presentación con IA',
+							'Tendrás tu presentación en tu Google Slides siempre',
+							'Los créditos nunca expiran',
 							'Soporte via Discord o email',
 							'Ideal para necesidades de alto volumen',
 							'Soporte prioritario',
@@ -194,8 +199,8 @@ export default async function HomePage() {
 							<Logo size={30} />
 							<h2 className='font-medium'>Slaidge</h2>
 						</div>
-						<p className='text-muted-foreground'>
-							Termina tus presentaciones en minutos, no horas
+						<p className='text-muted-foreground mt-2'>
+							Construye tu presentación con IA, en minutos
 						</p>
 						<p className='text-muted-foreground'>
 							Copyright @{new Date().getFullYear()} - Todos los derechos
@@ -210,7 +215,7 @@ export default async function HomePage() {
 							<li>
 								<Link
 									className='hover:underline text-muted-foreground'
-									href='#'
+									href='/log-in'
 								>
 									Login
 								</Link>
@@ -218,7 +223,7 @@ export default async function HomePage() {
 							<li>
 								<Link
 									className='hover:underline text-muted-foreground'
-									href='#'
+									href='#pricing'
 								>
 									Precios
 								</Link>
@@ -243,7 +248,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/terms-and-conditions'
 								>
-									Terminos y condiciones
+									Términos y condiciones
 								</Link>
 							</li>
 							<li>
@@ -251,7 +256,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/privacy-policy'
 								>
-									Politica de privacidad
+									Política de privacidad
 								</Link>
 							</li>
 							<li>

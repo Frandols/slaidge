@@ -1,63 +1,20 @@
 import { streamText } from 'ai'
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 
-import getCreditsUsed from '@/adapters/get-credits-used'
+import AIUsageToCreditsUsed from '@/adapters/ai-usage-to-credits-used'
+import prebuiltRequestsToAPIRequests from '@/adapters/prebuilt-requests-to-batch-update-requests'
 import anthropic from '@/clients/anthropic'
 import createSupabaseClient from '@/clients/factories/supabase'
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
-import prebuiltRequestsSchema, {
-	prebuiltRequestsExecutables,
-} from '@/prebuilt-requests'
+import guidelines from '@/prompts/guidelines'
+import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
+import getMaxOutputTokens from '@/services/anthropic/get-max-output-tokens'
 import getUserProfile from '@/services/google/get-user-profile'
-
-export async function updatePresentation(
-	requests: unknown[],
-	presentationId: string,
-	accessToken: string
-) {
-	const response = await fetch(
-		`https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`,
-		{
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ requests }),
-		}
-	)
-
-	return await response.text()
-}
-
-export function prebuiltRequestsToAPIRequests(
-	requests: z.infer<typeof prebuiltRequestsSchema>['requests']
-) {
-	return requests
-		.map((request) => {
-			const argsId = Object.keys(request)[0]
-
-			if (!argsId) throw new Error('PREBUILT_REQUEST_WITHOUT_ARGS')
-
-			if (!(argsId in prebuiltRequestsExecutables))
-				throw new Error('PREBUILT_REQUEST_WITHOUT_EXECUTABLE')
-
-			const executable =
-				prebuiltRequestsExecutables[
-					argsId as keyof typeof prebuiltRequestsExecutables
-				]
-
-			const args = request[argsId as keyof typeof request] as Parameters<
-				typeof executable
-			>[0]
-
-			// @ts-expect-error
-			return executable(args)
-		})
-		.flat()
-}
+import updatePresentation from '@/services/google/update-presentation'
+import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
 export async function usePrebuiltRequests(
 	args: z.infer<typeof prebuiltRequestsSchema>,
@@ -75,15 +32,11 @@ export async function usePrebuiltRequests(
 
 export const updatesSchema = z.array(
 	z.discriminatedUnion('type', [
-		z
-			.object({
-				type: z.literal('custom'),
-				requests: z
-					.array(z.object({}).passthrough())
-					.describe('Google Slides API compatible batchUpdate requests'),
-			})
-			.describe('Used for custom requests to the Google Slides API'),
 		z.object({ type: z.literal('prebuilt') }).merge(prebuiltRequestsSchema),
+		z.object({
+			type: z.literal('custom'),
+			requests: z.array(z.object({}).passthrough()),
+		}),
 	])
 )
 
@@ -148,7 +101,12 @@ async function postChat(
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	const accessToken = await requireAccessToken(request.cookies)
+
 	const userProfile = await getUserProfile(accessToken)
+
+	const userCreditBalance = await getUserCreditBalance(userProfile.id)
+
+	if (userCreditBalance <= 0) throw new Error('NO_CREDITS')
 
 	const { id } = await params
 	const { messages } = await request.json()
@@ -167,10 +125,10 @@ async function postChat(
 
 	const presentation = await response.json()
 
-	const result = streamText({
+	const streamTextArgs = {
 		model: anthropic('claude-4-sonnet-20250514'),
-		system:
-			'Sos el agente encargado de una aplicacion llamada Slaidge, tu trabajo es escuchar las peticiones del usuario y realizar cambios en una presentacion que el esta editando. Recuerda siempre usar informacion relevante, si usas elementos informativos siempre deberias ocupar todas las filas y columnas de la diapositiva, en cualquier distribucion que quieras, pero usandolas todas. Debes agregar imagenes y graficos cuando sea pertinente, y usar emoticonos para mejorar la memoria visual.',
+		system: `You are the Slaidge edition manager, you are in charge of editing a presentation through the given tools.
+${guidelines('editor')}`,
 		messages,
 		tools: {
 			updatePresentation: {
@@ -220,13 +178,37 @@ async function postChat(
 				},
 			},
 		},
+	}
+
+	const maxTokens = await getMaxOutputTokens(
+		messages,
+		streamTextArgs.model.modelId,
+		streamTextArgs.system,
+		Object.keys(streamTextArgs.tools).map((toolKey) => {
+			const tool =
+				streamTextArgs.tools[toolKey as keyof typeof streamTextArgs.tools]
+
+			return {
+				name: toolKey,
+				description: tool.description,
+				input_schema: {
+					...zodToJsonSchema(tool.parameters, 'input_schema'),
+					type: 'object',
+				},
+			}
+		})
+	)
+
+	const result = streamText({
+		...streamTextArgs,
+		maxTokens,
 		maxSteps: 10,
 		onFinish: async ({ usage }) => {
 			const supabase = await createSupabaseClient()
 
 			await supabase.rpc('insert_credit_usage', {
 				user_id: userProfile.id,
-				amount: getCreditsUsed(usage),
+				amount: AIUsageToCreditsUsed(usage),
 				changelog_id: null,
 			})
 		},
