@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default function ContinueWithGoogleButton() {
-	const { theme } = useTheme()
+	const { resolvedTheme } = useTheme()
 
 	const params = new URLSearchParams({
 		client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
@@ -29,7 +29,7 @@ export default function ContinueWithGoogleButton() {
 				className='w-full flex items-center justify-center gap-2 border'
 			>
 				<Image
-					src={theme === 'dark' ? '/google.svg' : '/google-dark.svg'}
+					src={resolvedTheme === 'dark' ? '/google.svg' : '/google-dark.svg'}
 					alt={`Google's logo`}
 					width={16}
 					height={16}

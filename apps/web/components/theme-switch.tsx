@@ -5,9 +5,10 @@ import { useTheme } from 'next-themes'
 import { Switch } from '@workspace/ui/components/switch'
 
 export default function ThemeSwitch() {
-	const { theme, setTheme } = useTheme()
+	const { resolvedTheme, setTheme } = useTheme()
 
-	const checked = theme === 'dark'
+	const checked = resolvedTheme === 'dark'
+
 	const onCheckedChange = (newChecked: boolean) => {
 		setTheme(newChecked ? 'dark' : 'light')
 	}
