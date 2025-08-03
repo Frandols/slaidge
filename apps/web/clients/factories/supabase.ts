@@ -1,5 +1,17 @@
-import { createSupabaseServerClient } from '@workspace/supabase/server'
+import { CookieMethodsServer, createServerClient } from '@supabase/ssr'
+import { SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+
+const createSupabaseServerClient = (
+	cookies: CookieMethodsServer
+): SupabaseClient =>
+	createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_KEY!,
+		{
+			cookies,
+		}
+	)
 
 export default async function createSupabaseClient(): Promise<
 	ReturnType<typeof createSupabaseServerClient>
