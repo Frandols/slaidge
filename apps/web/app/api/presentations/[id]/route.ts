@@ -3,62 +3,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import createSupabaseClient from '@/clients/factories/supabase'
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
-import { APIPresentationSchema } from '@/schemas/presentation'
-import APIToAppPresentationAdapter from '@/schemas/presentation/adapters/api-to-app'
+import getPresentation from '@/services/google/get-presentation'
 
-interface Presentation {
-	id: string
-	title: string
-	pageSize: {
-		width: number
-		height: number
+export const GET = await withNextResponseJsonError(
+	async (request: NextRequest, { params }: { params: { id: string } }) => {
+		const accessToken = await requireAccessToken(request.cookies)
+
+		const { id } = await params
+
+		const presentation = await getPresentation(id, accessToken)
+
+		return NextResponse.json(presentation)
 	}
-	slides: {
-		id: string
-	}[]
-}
-
-export async function getPresentationById(
-	id: string,
-	accessToken: string
-): Promise<Presentation> {
-	const response = await fetch(
-		`https://slides.googleapis.com/v1/presentations/${id}`,
-		{
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		}
-	)
-
-	const json = await response.json()
-
-	const presentationParsing = APIPresentationSchema.safeParse(json)
-
-	if (!presentationParsing.success) throw new Error('MALFORMED_PRESENTATION')
-
-	const unadaptedPresentation = presentationParsing.data
-	const adaptedPresentation: Presentation = APIToAppPresentationAdapter(
-		unadaptedPresentation
-	)
-
-	return adaptedPresentation
-}
-
-async function getPresentation(
-	request: NextRequest,
-	{ params }: { params: { id: string } }
-) {
-	const accessToken = await requireAccessToken(request.cookies)
-
-	const { id } = await params
-
-	const presentation = await getPresentationById(id, accessToken)
-
-	return NextResponse.json(presentation)
-}
-
-export const GET = await withNextResponseJsonError(getPresentation)
+)
 
 async function patchPresentation(
 	request: NextRequest,
