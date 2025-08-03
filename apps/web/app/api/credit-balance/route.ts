@@ -5,7 +5,7 @@ import requireAccessToken from '@/guards/require-access-token'
 import getUserProfile from '@/services/google/get-user-profile'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
-async function getCreditBalance(request: NextRequest) {
+async function getCreditBalance(request: NextRequest, { params: {} }) {
 	const accessToken = await requireAccessToken(request.cookies)
 	const userProfile = await getUserProfile(accessToken)
 	const creditBalance = await getUserCreditBalance(userProfile.id)
