@@ -6,7 +6,10 @@ import requireAccessToken from '@/guards/require-access-token'
 import getPresentation from '@/services/google/get-presentation'
 
 export const GET = await withNextResponseJsonError(
-	async (request: NextRequest, { params }: { params: { id: string } }) => {
+	async (
+		request: NextRequest,
+		{ params }: { params: Promise<{ id: string }> }
+	) => {
 		const accessToken = await requireAccessToken(request.cookies)
 
 		const { id } = await params
@@ -19,7 +22,7 @@ export const GET = await withNextResponseJsonError(
 
 async function patchPresentation(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	const accessToken = await requireAccessToken(request.cookies)
 
