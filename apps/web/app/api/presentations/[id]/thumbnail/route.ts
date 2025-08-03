@@ -1,9 +1,9 @@
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
 import getPresentation from '@/services/google/get-presentation'
+import getThumbnailImageResponse from '@/services/google/get-thumbnail-image-response'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
-import { getThumbnailImageResponse } from '../slides/[slideId]/thumbnail/route'
+import { NextRequest } from 'next/server'
 
 async function getThumbnail(
 	_: NextRequest,
