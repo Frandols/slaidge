@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { getPresentationById } from '@/app/api/presentations/[id]/route'
 import Chat from '@/components/chat'
 import PresentationHeaderWithUpdatedCreditBalance from '@/components/presentation-header-with-updatable-credit-balance'
 import PresentationNav from '@/components/presentation-nav'
@@ -15,6 +14,7 @@ import LastEditionTime from '@/contexts/last-edition-time'
 import Slides from '@/contexts/slides'
 import Toggling from '@/contexts/toggling'
 import requireAccessToken from '@/guards/require-access-token'
+import getPresentation from '@/services/google/get-presentation'
 import getUserProfile from '@/services/google/get-user-profile'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
@@ -29,7 +29,7 @@ export async function generateMetadata({
 		const cookieStore = await cookies()
 		const accessToken = await requireAccessToken(cookieStore)
 
-		const presentation = await getPresentationById(id, accessToken)
+		const presentation = await getPresentation(id, accessToken)
 
 		return { title: `${presentation.title} | Slaidge` }
 	} catch {
@@ -50,7 +50,7 @@ export default async function PresentationLayout({
 		const cookieStore = await cookies()
 		const accessToken = await requireAccessToken(cookieStore)
 
-		const presentation = await getPresentationById(id, accessToken)
+		const presentation = await getPresentation(id, accessToken)
 
 		const userProfile = await getUserProfile(accessToken)
 		const creditBalance = await getUserCreditBalance(userProfile.id)

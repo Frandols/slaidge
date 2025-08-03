@@ -1,8 +1,8 @@
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
+import getPresentation from '@/services/google/get-presentation'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { getPresentationById } from '../route'
 import { getThumbnailImageResponse } from '../slides/[slideId]/thumbnail/route'
 
 async function getThumbnail(
@@ -14,7 +14,7 @@ async function getThumbnail(
 	const accessToken = await requireAccessToken(cookieStore)
 	const { id } = await params
 
-	const presentation = await getPresentationById(id, accessToken)
+	const presentation = await getPresentation(id, accessToken)
 
 	const firstSlide = presentation.slides[0]
 
