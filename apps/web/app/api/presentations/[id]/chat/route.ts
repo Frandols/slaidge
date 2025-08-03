@@ -16,7 +16,7 @@ import getUserProfile from '@/services/google/get-user-profile'
 import updatePresentation from '@/services/google/update-presentation'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
-export async function usePrebuiltRequests(
+async function usePrebuiltRequests(
 	args: z.infer<typeof prebuiltRequestsSchema>,
 	presentationId: string,
 	accessToken: string
@@ -30,7 +30,7 @@ export async function usePrebuiltRequests(
 	)
 }
 
-export const updatesSchema = z.array(
+const updatesSchema = z.array(
 	z.discriminatedUnion('type', [
 		z.object({ type: z.literal('prebuilt') }).merge(prebuiltRequestsSchema),
 		z.object({
@@ -40,7 +40,7 @@ export const updatesSchema = z.array(
 	])
 )
 
-export async function useUpdates(
+async function useUpdates(
 	updates: z.infer<typeof updatesSchema>,
 	presentationId: string,
 	accessToken: string
