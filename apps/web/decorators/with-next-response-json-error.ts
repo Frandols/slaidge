@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export default async function withNextResponseJsonError<T>(
-	handler: (
-		request: NextRequest,
-		{ params }: { params: T }
-	) => Promise<Response>
+	handler: (request: NextRequest, context: T) => Promise<Response>
 ) {
-	return async (request: NextRequest, context: { params: T }) => {
+	return async (request: NextRequest, context: T) => {
 		try {
 			return await handler(request, context)
 		} catch (error) {
