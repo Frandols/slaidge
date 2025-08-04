@@ -20,7 +20,7 @@ export default function PresentationNav(props: PresentationNavProps) {
 			{slides.value.map((slide) => (
 				<Link
 					key={slide.id}
-					href={`${process.env.NEXT_PUBLIC_SITE_URL}/presentations/${props.presentationId}/${slide.id}`}
+					href={`/presentations/${props.presentationId}/${slide.id}`}
 					className='h-full aspect-video relative hover:-translate-y-2 transition-transform rounded'
 				>
 					<FillerSkeleton />
