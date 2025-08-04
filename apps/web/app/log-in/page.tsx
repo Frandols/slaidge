@@ -1,7 +1,14 @@
 import ContinueWithGoogleButton from '@/components/continue-with-google-button'
 import { Separator } from '@workspace/ui/components/separator'
 import { ArrowRight } from 'lucide-react'
+import { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+	title: 'Conectá tu cuenta | Slaidge',
+	description:
+		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+}
 
 export default async function LogInPage() {
 	return (
