@@ -60,7 +60,7 @@ export default async function HomePage() {
 
 	return (
 		<div className='bg-background min-h-dvh'>
-			<header className='max-w-7xl mx-auto py-5 px-8 flex gap-8 justify-between border-b border-dashed border-x'>
+			<header className='max-w-7xl mx-auto py-5 px-4 md:px-8 flex gap-8 justify-between border-b border-dashed border-x'>
 				<div className='flex gap-3 items-center'>
 					<Logo />
 					<h2 className='font-medium'>Slaidge</h2>
@@ -93,7 +93,7 @@ export default async function HomePage() {
 					)}
 				</ul>
 			</header>
-			<main className='max-w-7xl mx-auto py-8 px-8 flex flex-col items-center border-x border-b pb-24 border-dashed'>
+			<main className='max-w-7xl mx-auto py-8 px-4 md:px-8 flex flex-col items-center border-x border-b pb-24 border-dashed'>
 				<div className='max-w-3xl mx-auto flex flex-col gap-6 items-center mb-12'>
 					<div
 						className={
@@ -127,7 +127,7 @@ export default async function HomePage() {
 			</main>
 			{userProfile && userProfile.presentationsList.length > 0 ? (
 				<div className='w-full'>
-					<div className='max-w-7xl mx-auto px-8 border-x border-b border-dashed py-8'>
+					<div className='max-w-7xl mx-auto px-4 md:px-8 border-x border-b border-dashed py-8'>
 						<div className='w-full border border-dashed rounded-lg'>
 							<div className='flex gap-2 items-center flex-wrap border-b border-dashed p-4'>
 								<h2 className='text-xl md:text-2xl font-bold'>
@@ -142,7 +142,7 @@ export default async function HomePage() {
 					</div>
 				</div>
 			) : null}
-			<section className='max-w-7xl mx-auto px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
+			<section className='max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
 				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
 					Demo
 				</h2>
@@ -166,7 +166,7 @@ export default async function HomePage() {
 					/>
 				</div>
 			</section>
-			<section className='max-w-7xl mx-auto px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
+			<section className='max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
 				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
 					Precios
 				</h2>
@@ -229,7 +229,7 @@ export default async function HomePage() {
 				</div>
 			</section>
 			<footer className='w-full'>
-				<div className='max-w-7xl mx-auto py-8 flex flex-wrap justify-between border-x border-b border-dashed px-8 gap-8'>
+				<div className='max-w-7xl mx-auto py-8 flex flex-wrap justify-between border-x border-b border-dashed px-4 md:px-8 gap-8'>
 					<div className='flex flex-col flex-grow'>
 						<div className='flex gap-2 items-center'>
 							<Logo size={30} />
