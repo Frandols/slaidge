@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
 	title: 'Términos y condiciones | Slaidge',
 	description:
-		'Slaidge que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
 }
 
 export default function TermsAndConditionsPage() {

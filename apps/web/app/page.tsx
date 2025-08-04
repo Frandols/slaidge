@@ -12,6 +12,7 @@ import requireAccessToken from '@/guards/require-access-token'
 import getUserProfile from '@/services/google/get-user-profile'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 import getUserPresentations from '@/services/supabase/get-user-presentations'
+import HeroVideoDialog from '@workspace/ui/components/magicui/hero-video-dialog'
 
 import { Badge } from '@workspace/ui/components/badge'
 import {
@@ -143,6 +144,30 @@ export default async function HomePage() {
 			) : null}
 			<section className='max-w-7xl mx-auto px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
 				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
+					Demo
+				</h2>
+				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
+					Mirá lo que podés hacer
+				</p>
+				<div className='relative'>
+					<HeroVideoDialog
+						className='block dark:hidden'
+						animationStyle='from-center'
+						videoSrc='https://www.youtube.com/embed/VwsQRylyAGc?si=npblNt3wb-e6VIWn'
+						thumbnailSrc='/panel.png'
+						thumbnailAlt='Demo Video'
+					/>
+					<HeroVideoDialog
+						className='hidden dark:block'
+						animationStyle='from-center'
+						videoSrc='https://www.youtube.com/embed/VwsQRylyAGc?si=npblNt3wb-e6VIWn'
+						thumbnailSrc='/panel-dark.png'
+						thumbnailAlt='Demo Video'
+					/>
+				</div>
+			</section>
+			<section className='max-w-7xl mx-auto px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
+				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
 					Precios
 				</h2>
 				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
@@ -242,7 +267,7 @@ export default async function HomePage() {
 							<li>
 								<Link
 									className='hover:underline text-muted-foreground'
-									href='#'
+									href='/support'
 								>
 									Soporte
 								</Link>
