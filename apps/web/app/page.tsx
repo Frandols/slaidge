@@ -154,14 +154,14 @@ export default async function HomePage() {
 						className='block dark:hidden'
 						animationStyle='from-center'
 						videoSrc='https://www.youtube.com/embed/VwsQRylyAGc?si=npblNt3wb-e6VIWn'
-						thumbnailSrc='/panel.png'
+						thumbnailSrc='/panel.webp'
 						thumbnailAlt='Demo Video'
 					/>
 					<HeroVideoDialog
 						className='hidden dark:block'
 						animationStyle='from-center'
 						videoSrc='https://www.youtube.com/embed/VwsQRylyAGc?si=npblNt3wb-e6VIWn'
-						thumbnailSrc='/panel-dark.png'
+						thumbnailSrc='/panel-dark.webp'
 						thumbnailAlt='Demo Video'
 					/>
 				</div>
