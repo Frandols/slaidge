@@ -24,6 +24,17 @@ export const metadata: Metadata = {
 	title: 'Construye tu presentación con IA, en minutos | Slaidge',
 	description:
 		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+	openGraph: {
+		title: 'Construye tu presentación con IA, en minutos | Slaidge',
+		description:
+			'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+		url: 'https://slaidge.com/',
+		images: [{ url: '/share-main.webp' }],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		creator: '@frandelosantos',
+	},
 }
 
 async function checkUserLogged() {

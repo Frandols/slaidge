@@ -26,6 +26,8 @@ export default function PricingCard(props: PricingCardProps) {
 		try {
 			await createPreference(props.offerId)
 		} catch (error) {
+			console.log(error)
+
 			if (!(error instanceof Error)) return
 
 			if (error.message === 'UNAUTHENTICATED') setShowDialog(true)
