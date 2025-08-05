@@ -209,7 +209,6 @@ ${guidelines('editor')}`,
 			await supabase.rpc('insert_credit_usage', {
 				user_id: userProfile.id,
 				amount: AIUsageToCreditsUsed(usage),
-				changelog_id: null,
 			})
 		},
 	})
