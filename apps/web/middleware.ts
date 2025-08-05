@@ -2,6 +2,8 @@ import axios from 'axios'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { syncGoogleUser } from '@/services/supabase/sync-google-user'
+
 const NEXT_PUBLIC_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
 
@@ -18,7 +20,7 @@ export async function middleware(request: NextRequest) {
 
 	const { data: session } = await axios.post<{
 		access_token: string
-		refresh_token: string
+		refresh_token?: string
 	}>(
 		'https://oauth2.googleapis.com/token',
 		{},
@@ -50,6 +52,8 @@ export async function middleware(request: NextRequest) {
 			maxAge: 60 * 60 * 24 * 30,
 		})
 	}
+
+	await syncGoogleUser(session.access_token)
 
 	return NextResponse.redirect(new URL(request.nextUrl))
 }

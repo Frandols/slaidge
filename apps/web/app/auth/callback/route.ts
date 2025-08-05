@@ -1,3 +1,7 @@
+import createSupabaseClient from '@/clients/factories/supabase'
+import getUserEmail from '@/services/google/get-user-email'
+import getUserProfile from '@/services/google/get-user-profile'
+import { syncGoogleUser } from '@/services/supabase/sync-google-user'
 import axios from 'axios'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -14,7 +18,10 @@ export async function GET(req: NextRequest) {
 	}
 
 	try {
-		const { data: session, status } = await axios.post(
+		const { data: session, status } = await axios.post<{
+			access_token: string
+			refresh_token?: string
+		}>(
 			'https://oauth2.googleapis.com/token',
 			{},
 			{
@@ -51,6 +58,8 @@ export async function GET(req: NextRequest) {
 				maxAge: 60 * 60 * 24 * 30,
 			})
 		}
+
+		await syncGoogleUser(session.access_token)
 
 		return redirection
 	} catch (error) {
