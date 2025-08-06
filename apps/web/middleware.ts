@@ -53,8 +53,6 @@ export async function middleware(request: NextRequest) {
 		})
 	}
 
-	await syncGoogleUser(session.access_token)
-
 	return NextResponse.redirect(new URL(request.nextUrl))
 }
 
