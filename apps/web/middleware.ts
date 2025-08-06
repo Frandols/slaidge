@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { syncGoogleUser } from '@/services/supabase/sync-google-user'
+import deleteTokens from '@/utils/delete-tokens'
 
 const NEXT_PUBLIC_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
@@ -12,48 +13,56 @@ export async function middleware(request: NextRequest) {
 
 	const accessToken = cookieStore.get('access_token')?.value
 
-	if (accessToken) return NextResponse.next()
+	try {
+		if (accessToken) throw new Error('UNNECESSARY_REFRESH')
 
-	const refreshToken = cookieStore.get('refresh_token')?.value
+		const refreshToken = cookieStore.get('refresh_token')?.value
 
-	if (!refreshToken) return NextResponse.next()
+		if (!refreshToken) throw new Error('REFRESH_TOKEN_NOT_FOUND')
 
-	const { data: session } = await axios.post<{
-		access_token: string
-		refresh_token?: string
-	}>(
-		'https://oauth2.googleapis.com/token',
-		{},
-		{
-			params: {
-				client_id: NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-				client_secret: GOOGLE_CLIENT_SECRET,
-				grant_type: 'refresh_token',
-				refresh_token: refreshToken,
-			},
-			headers: { Accept: 'application/json' },
-		}
-	)
+		deleteTokens(cookieStore)
 
-	cookieStore.set('access_token', session.access_token, {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'lax',
-		path: '/',
-		maxAge: 60 * 60,
-	})
+		const { data: session } = await axios.post<{
+			access_token: string
+			refresh_token?: string
+		}>(
+			'https://oauth2.googleapis.com/token',
+			{},
+			{
+				params: {
+					client_id: NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+					client_secret: GOOGLE_CLIENT_SECRET,
+					grant_type: 'refresh_token',
+					refresh_token: refreshToken,
+				},
+				headers: { Accept: 'application/json' },
+			}
+		)
 
-	if (session.refresh_token) {
-		cookieStore.set('refresh_token', session.refresh_token, {
+		await syncGoogleUser(session.access_token)
+
+		cookieStore.set('access_token', session.access_token, {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'lax',
 			path: '/',
-			maxAge: 60 * 60 * 24 * 30,
+			maxAge: 60 * 60,
 		})
-	}
 
-	return NextResponse.redirect(new URL(request.nextUrl))
+		if (session.refresh_token) {
+			cookieStore.set('refresh_token', session.refresh_token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 60 * 60 * 24 * 30,
+			})
+		}
+
+		return NextResponse.redirect(new URL(request.nextUrl))
+	} catch {
+		return NextResponse.next()
+	}
 }
 
 export const config = {
