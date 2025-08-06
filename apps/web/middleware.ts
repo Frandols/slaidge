@@ -40,11 +40,6 @@ export async function middleware(request: NextRequest) {
 			}
 		)
 
-		await requireUserScopes(session.access_token, [
-			'https://www.googleapis.com/auth/userinfo.profile',
-			'https://www.googleapis.com/auth/userinfo.email',
-		])
-
 		await syncGoogleUser(session.access_token)
 
 		cookieStore.set('access_token', session.access_token, {
