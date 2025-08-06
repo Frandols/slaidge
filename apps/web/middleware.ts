@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { syncGoogleUser } from '@/services/supabase/sync-google-user'
 import deleteTokens from '@/utils/delete-tokens'
+import requireUserScopes from './guards/require-user-scopes'
 
 const NEXT_PUBLIC_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
@@ -38,6 +39,11 @@ export async function middleware(request: NextRequest) {
 				headers: { Accept: 'application/json' },
 			}
 		)
+
+		await requireUserScopes(session.access_token, [
+			'https://www.googleapis.com/auth/userinfo.profile',
+			'https://www.googleapis.com/auth/userinfo.email',
+		])
 
 		await syncGoogleUser(session.access_token)
 

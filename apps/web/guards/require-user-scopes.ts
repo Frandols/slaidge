@@ -1,6 +1,12 @@
 import getUserScopes from '@/services/google/get-user-scopes'
 
-export default async function requiredUserScopes(
+/**
+ * Require scopes by access token.
+ *
+ * @param accessToken The access token.
+ * @param scopes The required scopes array.
+ */
+export default async function requireUserScopes(
 	accessToken: string,
 	scopes: string[]
 ) {

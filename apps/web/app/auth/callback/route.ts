@@ -1,4 +1,5 @@
 import createSupabaseClient from '@/clients/factories/supabase'
+import requireUserScopes from '@/guards/require-user-scopes'
 import getUserEmail from '@/services/google/get-user-email'
 import getUserProfile from '@/services/google/get-user-profile'
 import { syncGoogleUser } from '@/services/supabase/sync-google-user'
@@ -13,11 +14,9 @@ export async function GET(req: NextRequest) {
 	const url = new URL(req.url)
 	const code = url.searchParams.get('code')
 
-	if (!code) {
-		return NextResponse.json({ error: 'Missing code' }, { status: 400 })
-	}
-
 	try {
+		if (!code) throw new Error('CODE_NOT_FOUND')
+
 		const { data: session, status } = await axios.post<{
 			access_token: string
 			refresh_token?: string
@@ -36,10 +35,15 @@ export async function GET(req: NextRequest) {
 			}
 		)
 
-		if (status !== 200) throw new Error('FAILED_TO_FETCH_TOKEN')
+		await requireUserScopes(session.access_token, [
+			'https://www.googleapis.com/auth/drive.file',
+			'https://www.googleapis.com/auth/userinfo.profile',
+			'https://www.googleapis.com/auth/userinfo.email',
+		])
 
-		const redirectionUrl = new URL('/', req.url)
-		const redirection = NextResponse.redirect(redirectionUrl)
+		await syncGoogleUser(session.access_token)
+
+		const redirection = NextResponse.redirect(new URL('/', req.url))
 
 		redirection.cookies.set('access_token', session.access_token, {
 			httpOnly: true,
@@ -58,8 +62,6 @@ export async function GET(req: NextRequest) {
 				maxAge: 60 * 60 * 24 * 30,
 			})
 		}
-
-		await syncGoogleUser(session.access_token)
 
 		return redirection
 	} catch (error) {
