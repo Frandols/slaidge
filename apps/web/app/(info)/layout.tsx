@@ -17,7 +17,7 @@ export default function LegalLayout({
 					</Button>
 				</Link>
 			</header>
-			<main className='max-w-3xl mx-auto py-8 px-8 flex flex-col items-center pb-24'>
+			<main className='max-w-3xl mx-auto py-8 px-8 flex flex-col items-start pb-24'>
 				{children}
 			</main>
 		</div>
