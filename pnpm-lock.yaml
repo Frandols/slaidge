@@ -153,6 +153,9 @@ importers:
       eslint-plugin-turbo:
         specifier: ^2.4.2
         version: 2.5.5(eslint@9.32.0)(turbo@2.5.5)
+      eslint-plugin-unused-imports:
+        specifier: ^4.1.4
+        version: 4.1.4(@typescript-eslint/eslint-plugin@8.38.0)(eslint@9.32.0)
       globals:
         specifier: ^15.15.0
         version: 15.15.0
@@ -3059,6 +3062,19 @@ packages:
       dotenv: 16.0.3
       eslint: 9.32.0
       turbo: 2.5.5
+    dev: true
+
+  /eslint-plugin-unused-imports@4.1.4(@typescript-eslint/eslint-plugin@8.38.0)(eslint@9.32.0):
+    resolution: {integrity: sha512-YptD6IzQjDardkl0POxnnRBhU1OEePMV0nd6siHaRBbd+lyh6NAhFEobiznKU7kTsSsDeSD62Pe7kAM1b7dAZQ==}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^8.0.0-0 || ^7.0.0 || ^6.0.0 || ^5.0.0
+      eslint: ^9.0.0 || ^8.0.0
+    peerDependenciesMeta:
+      '@typescript-eslint/eslint-plugin':
+        optional: true
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 8.38.0(@typescript-eslint/parser@8.38.0)(eslint@9.32.0)(typescript@5.9.2)
+      eslint: 9.32.0
     dev: true
 
   /eslint-scope@8.4.0:
