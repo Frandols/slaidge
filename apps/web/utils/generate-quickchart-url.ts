@@ -1,3 +1,6 @@
+import themeSchema from '@/schemas/theme'
+import z from 'zod'
+
 const baseUrl = 'https://quickchart.io/chart'
 const chartTypeMap = {
 	BAR: 'bar',
@@ -9,10 +12,12 @@ export default function generateQuickChartURL({
 	type,
 	data,
 	title,
+	theme,
 }: {
 	type: 'BAR' | 'LINE' | 'PIE'
 	data: { label: string; value: number }[]
 	title: string
+	theme: z.infer<typeof themeSchema>
 }): string {
 	const labels = data.map((d) => d.label)
 	const values = data.map((d) => d.value)
@@ -25,15 +30,7 @@ export default function generateQuickChartURL({
 				{
 					label: title,
 					data: values,
-					backgroundColor: [
-						'#3366CC',
-						'#DC3912',
-						'#FF9900',
-						'#109618',
-						'#990099',
-						'#0099C6',
-						'#DD4477',
-					],
+					backgroundColor: theme.colors.chart,
 				},
 			],
 		},

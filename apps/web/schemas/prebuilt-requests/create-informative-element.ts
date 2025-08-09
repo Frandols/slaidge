@@ -1,10 +1,8 @@
 import { z } from 'zod'
 
-import backgroundSettingsSchema from '@/schemas/background-settings'
-import styleSettingsSchema from '@/schemas/style-settings'
 import generateQuickChartURL from '@/utils/generate-quickchart-url'
-import getBackgroundRequests from '@/utils/get-background-requests'
 import hexToRgb from '@/utils/hex-to-rgb'
+import themeSchema from '../theme'
 
 const areasFontSizes: Record<number, number> = {
 	22500: 12,
@@ -60,8 +58,6 @@ export const textElementSettingsSchema = elementSettingsCoreSchema.extend({
 		.min(1)
 		.max(300)
 		.describe('Content of the text, 300 characters maximum'),
-	style: styleSettingsSchema.optional(),
-	background: backgroundSettingsSchema.optional(),
 })
 
 const imageElementSettingsSchema = elementSettingsCoreSchema.extend({
@@ -100,7 +96,8 @@ export const createInformativeElementParamsSchema = z.object({
 })
 
 export default function createInformativeElement(
-	params: z.infer<typeof createInformativeElementParamsSchema>
+	params: z.infer<typeof createInformativeElementParamsSchema>,
+	theme: z.infer<typeof themeSchema>
 ): unknown[] {
 	const colWidth = 600 / params.element.col[1]
 	const rowHeight = 225 / params.element.row[1]
@@ -131,42 +128,6 @@ export default function createInformativeElement(
 	}
 
 	if (params.element.type === 'text') {
-		const backgroundRequests = params.element.background
-			? params.element.background.type === 'solid'
-				? [
-						{
-							updateShapeProperties: {
-								objectId: params.element.id,
-								shapeProperties: {
-									shapeBackgroundFill: {
-										solidFill: {
-											color: {
-												rgbColor: hexToRgb(params.element.background.color),
-											},
-										},
-									},
-								},
-								fields: 'shapeBackgroundFill.solidFill.color',
-							},
-						},
-					]
-				: [
-						{
-							updateShapeProperties: {
-								objectId: params.element.id,
-								shapeProperties: {
-									shapeBackgroundFill: {
-										stretchedPictureFill: {
-											contentUrl: params.element.background.url,
-										},
-									},
-								},
-								fields: 'shapeBackgroundFill.stretchedPictureFill.contentUrl',
-							},
-						},
-					]
-			: []
-
 		return [
 			{
 				createShape: {
@@ -175,7 +136,6 @@ export default function createInformativeElement(
 					elementProperties,
 				},
 			},
-			...backgroundRequests,
 			{
 				insertText: {
 					objectId: params.element.id,
@@ -188,28 +148,18 @@ export default function createInformativeElement(
 					objectId: params.element.id,
 					textRange: { type: 'ALL' },
 					style: {
-						fontFamily: params.element.style?.fontFamily ?? 'Arial',
+						fontFamily: theme.fonts.sansSerif,
 						fontSize: {
 							magnitude: fontSize,
 							unit: 'PT',
 						},
-						bold: params.element.style?.bold,
-						italic: params.element.style?.italic,
-						foregroundColor: params.element.style?.color
-							? {
-									opaqueColor: {
-										rgbColor: hexToRgb(params.element.style.color),
-									},
-								}
-							: undefined,
+						foregroundColor: {
+							opaqueColor: {
+								rgbColor: hexToRgb(theme.colors.foreground),
+							},
+						},
 					},
-					fields: [
-						'fontFamily',
-						'fontSize',
-						params.element.style?.bold ? 'bold' : null,
-						params.element.style?.italic ? 'italic' : null,
-						params.element.style?.color ? 'foregroundColor' : null,
-					]
+					fields: ['fontFamily', 'fontSize', 'foregroundColor']
 						.filter(Boolean)
 						.join(','),
 				},
@@ -232,6 +182,7 @@ export default function createInformativeElement(
 		type: params.element.chartType,
 		data: params.element.data,
 		title: params.element.title,
+		theme,
 	})
 
 	return [

@@ -1,45 +1,36 @@
-import backgroundSettingsSchema from '@/schemas/background-settings'
 import { z } from 'zod'
-import hexToRgb from './hex-to-rgb'
 
+import themeSchema from '@/schemas/theme'
+import hexToRgb from '@/utils/hex-to-rgb'
+
+/**
+ * Get the native requests for the background of an object.
+ *
+ * @param id The object ID.
+ * @param theme The presentation's theme.
+ * @returns Native requests for styling background.
+ */
 export default function getBackgroundRequests(
 	id: string,
-	backgroundSettings: z.infer<typeof backgroundSettingsSchema>
+	theme: z.infer<typeof themeSchema>
 ) {
-	const backgroundRequests =
-		backgroundSettings.type === 'solid'
-			? [
-					{
-						updatePageProperties: {
-							objectId: id,
-							pageProperties: {
-								pageBackgroundFill: {
-									solidFill: {
-										color: {
-											rgbColor: hexToRgb(backgroundSettings.color),
-										},
-									},
-								},
+	const backgroundRequests = [
+		{
+			updatePageProperties: {
+				objectId: id,
+				pageProperties: {
+					pageBackgroundFill: {
+						solidFill: {
+							color: {
+								rgbColor: hexToRgb(theme.colors.background),
 							},
-							fields: 'pageBackgroundFill.solidFill.color',
 						},
 					},
-				]
-			: [
-					{
-						updatePageProperties: {
-							objectId: id,
-							pageProperties: {
-								pageBackgroundFill: {
-									stretchedPictureFill: {
-										contentUrl: backgroundSettings.url,
-									},
-								},
-							},
-							fields: 'pageBackgroundFill.stretchedPictureFill.contentUrl',
-						},
-					},
-				]
+				},
+				fields: 'pageBackgroundFill.solidFill.color',
+			},
+		},
+	]
 
 	return backgroundRequests
 }

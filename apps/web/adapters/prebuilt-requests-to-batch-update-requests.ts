@@ -3,6 +3,7 @@ import { z } from 'zod'
 import prebuiltRequestsSchema, {
 	prebuiltRequestsExecutables,
 } from '@/schemas/prebuilt-requests'
+import themeSchema from '@/schemas/theme'
 
 /**
  * Go from prebuilt requests to Google Slides API requests.
@@ -11,7 +12,8 @@ import prebuiltRequestsSchema, {
  * @returns The Google Slides API compatible requests.
  */
 export default function prebuiltRequestsToAPIRequests(
-	requests: z.infer<typeof prebuiltRequestsSchema>['requests']
+	requests: z.infer<typeof prebuiltRequestsSchema>['requests'],
+	theme: z.infer<typeof themeSchema>
 ) {
 	return requests
 		.map((request) => {
@@ -32,7 +34,7 @@ export default function prebuiltRequestsToAPIRequests(
 			>[0]
 
 			// @ts-expect-error
-			return executable(args)
+			return executable(args, theme)
 		})
 		.flat()
 }

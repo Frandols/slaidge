@@ -6,7 +6,9 @@
  */
 export default function hexToRgb(hex: string) {
 	const val = hex.replace('#', '')
+
 	const bigint = parseInt(val, 16)
+
 	return {
 		red: ((bigint >> 16) & 255) / 255,
 		green: ((bigint >> 8) & 255) / 255,

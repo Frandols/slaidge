@@ -14,6 +14,7 @@ import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
 import getMaxOutputTokens from '@/services/anthropic/get-max-output-tokens'
 import getUserProfile from '@/services/google/get-user-profile'
 import updatePresentation from '@/services/google/update-presentation'
+import { getPresentationTheme } from '@/services/supabase/get-presentation-theme'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
 async function usePrebuiltRequests(
@@ -21,7 +22,12 @@ async function usePrebuiltRequests(
 	presentationId: string,
 	accessToken: string
 ) {
-	const batchUpdateRequests = prebuiltRequestsToAPIRequests(args.requests)
+	const theme = await getPresentationTheme(presentationId)
+
+	const batchUpdateRequests = prebuiltRequestsToAPIRequests(
+		args.requests,
+		theme
+	)
 
 	return await updatePresentation(
 		batchUpdateRequests,

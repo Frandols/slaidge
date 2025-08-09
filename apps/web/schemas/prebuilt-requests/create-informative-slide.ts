@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
-import backgroundSettingsSchema from '@/schemas/background-settings'
-import styleSettingsSchema from '@/schemas/style-settings'
 import hexToRgb from '@/utils/hex-to-rgb'
+import themeSchema from '../theme'
 
 export const createInformativeSlideParamsSchema = z.object({
 	id: z.string().min(1).describe('ID of the new slide'),
@@ -13,7 +12,6 @@ export const createInformativeSlideParamsSchema = z.object({
 			.min(1)
 			.max(50)
 			.describe('Content of the title, 50 characters maximum.'),
-		style: styleSettingsSchema.omit({ bold: true }).optional(),
 	}),
 	footer: z.object({
 		id: z.string().min(1).describe('ID of the footer text box'),
@@ -22,49 +20,30 @@ export const createInformativeSlideParamsSchema = z.object({
 			.min(1)
 			.max(50)
 			.describe('Content of the footer, 50 characters maximum.'),
-		style: styleSettingsSchema.omit({ bold: true }).optional(),
 	}),
-	background: backgroundSettingsSchema.optional(),
 })
 
 export default function createInformativeSlide(
-	params: z.infer<typeof createInformativeSlideParamsSchema>
+	params: z.infer<typeof createInformativeSlideParamsSchema>,
+	theme: z.infer<typeof themeSchema>
 ) {
-	const backgroundRequests = params.background
-		? params.background.type === 'solid'
-			? [
-					{
-						updatePageProperties: {
-							objectId: params.id,
-							pageProperties: {
-								pageBackgroundFill: {
-									solidFill: {
-										color: {
-											rgbColor: hexToRgb(params.background.color),
-										},
-									},
-								},
+	const backgroundRequests = [
+		{
+			updatePageProperties: {
+				objectId: params.id,
+				pageProperties: {
+					pageBackgroundFill: {
+						solidFill: {
+							color: {
+								rgbColor: hexToRgb(theme.colors.background),
 							},
-							fields: 'pageBackgroundFill.solidFill.color',
 						},
 					},
-				]
-			: [
-					{
-						updatePageProperties: {
-							objectId: params.id,
-							pageProperties: {
-								pageBackgroundFill: {
-									stretchedPictureFill: {
-										contentUrl: params.background.url,
-									},
-								},
-							},
-							fields: 'pageBackgroundFill.stretchedPictureFill.contentUrl',
-						},
-					},
-				]
-		: []
+				},
+				fields: 'pageBackgroundFill.solidFill.color',
+			},
+		},
+	]
 
 	return [
 		{
@@ -114,24 +93,17 @@ export default function createInformativeSlide(
 				objectId: params.title.id,
 				textRange: { type: 'ALL' },
 				style: {
-					fontFamily: params.title.style?.fontFamily ?? 'Arial',
+					fontFamily: theme.fonts.serif,
 					fontSize: {
 						magnitude: 32,
 						unit: 'PT',
 					},
 					bold: true,
-					italic: params.title.style?.italic,
-					foregroundColor: params.title.style?.color
-						? { opaqueColor: { rgbColor: hexToRgb(params.title.style.color) } }
-						: undefined,
+					foregroundColor: {
+						opaqueColor: { rgbColor: hexToRgb(theme.colors.foreground) },
+					},
 				},
-				fields: [
-					'fontFamily',
-					'fontSize',
-					'bold',
-					params.title.style?.italic ? 'italic' : null,
-					params.title.style?.color ? 'foregroundColor' : null,
-				]
+				fields: ['fontFamily', 'fontSize', 'bold', 'foregroundColor']
 					.filter(Boolean)
 					.join(','),
 			},
@@ -174,32 +146,19 @@ export default function createInformativeSlide(
 				objectId: params.footer.id,
 				textRange: { type: 'ALL' },
 				style: {
-					fontFamily: params.footer.style?.fontFamily ?? 'Arial',
+					fontFamily: theme.fonts.sansSerif,
 					fontSize: {
 						magnitude: 12,
 						unit: 'PT',
 					},
 					bold: true,
-					italic: params.footer.style?.italic,
-					foregroundColor: (params.footer.style?.color
-						? { opaqueColor: { rgbColor: hexToRgb(params.footer.style.color) } }
-						: undefined) ?? {
+					foregroundColor: {
 						opaqueColor: {
-							rgbColor: {
-								red: 0.4,
-								green: 0.4,
-								blue: 0.4,
-							},
+							rgbColor: hexToRgb(theme.colors.mutedForeground),
 						},
 					},
 				},
-				fields: [
-					'fontFamily',
-					'fontSize',
-					'bold',
-					params.footer.style?.italic ? 'italic' : null,
-					'foregroundColor',
-				]
+				fields: ['fontFamily', 'fontSize', 'bold', 'foregroundColor']
 					.filter(Boolean)
 					.join(','),
 			},
