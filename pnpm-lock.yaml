@@ -234,9 +234,6 @@ importers:
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.2
         version: 1.2.2(@types/react@19.1.9)(react@19.1.1)
-      ai:
-        specifier: ^4.3.16
-        version: 4.3.19(react@19.1.1)(zod@3.25.76)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
