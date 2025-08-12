@@ -23,12 +23,16 @@ export default function PricingCard(props: PricingCardProps) {
 	const [showDialog, setShowDialog] = useState<boolean>(false)
 
 	const onClick = async () => {
-		try {
-			await createPreference(props.offerId)
-		} catch (error) {
-			if (!(error instanceof Error)) return
+		const result = await createPreference(props.offerId)
 
-			if (error.message === 'UNAUTHENTICATED') setShowDialog(true)
+		if (!result.error) return
+
+		switch (result.error) {
+			case 'UNAUTHENTICATED':
+				setShowDialog(true)
+				return
+			default:
+				return
 		}
 	}
 

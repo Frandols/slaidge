@@ -2,13 +2,15 @@
 
 import { Preference } from 'mercadopago'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import mercadopago from '@/clients/mercadopago'
 import offersData from '@/dictionaries/offers-data'
 import requireAccessToken from '@/guards/require-access-token'
 import offerIdSchema from '@/schemas/offer-id'
 import getUserProfile from '@/services/google/get-user-profile'
-import { redirect } from 'next/navigation'
+
+const publicErrors = ['INVALID_OFFER_ID', 'UNAUTHENTICATED'] as const
 
 /**
  * Create a MercadoPago preference.
@@ -20,12 +22,15 @@ export default async function createPreference(
 ) {
 	const parsing = offerIdSchema.safeParse(offerId)
 
-	if (!parsing.success) throw new Error('INVALID_OFFER_ID')
+	if (!parsing.success) return { error: 'INVALID_OFFER_ID' }
 
 	const validOfferId = parsing.data
 
 	const cookieStore = await cookies()
-	const accessToken = await requireAccessToken(cookieStore)
+	const accessToken = await requireAccessToken(cookieStore).catch(() => null)
+
+	if (accessToken === null) return { error: 'UNAUTHENTICATED' }
+
 	const userProfile = await getUserProfile(accessToken)
 
 	const preference = await new Preference(mercadopago).create({
