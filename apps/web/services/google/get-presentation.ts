@@ -1,3 +1,4 @@
+import createSupabaseClient from '@/clients/factories/supabase'
 import { APIPresentationSchema } from '@/schemas/presentation'
 import APIToAppPresentationAdapter from '@/schemas/presentation/adapters/api-to-app'
 
@@ -16,26 +17,46 @@ interface Presentation {
 export default async function getPresentation(
 	id: string,
 	accessToken: string
-): Promise<Presentation> {
-	const response = await fetch(
-		`https://slides.googleapis.com/v1/presentations/${id}`,
-		{
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		}
-	)
+): Promise<Presentation & { lastEditionTime: number }> {
+	const [adaptedPresentation, lastEditionTime] = await Promise.all([
+		(async () => {
+			const response = await fetch(
+				`https://slides.googleapis.com/v1/presentations/${id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			)
 
-	const json = await response.json()
+			const json = await response.json()
 
-	const presentationParsing = APIPresentationSchema.safeParse(json)
+			const presentationParsing = APIPresentationSchema.safeParse(json)
 
-	if (!presentationParsing.success) throw new Error('MALFORMED_PRESENTATION')
+			if (!presentationParsing.success)
+				throw new Error('MALFORMED_PRESENTATION')
 
-	const unadaptedPresentation = presentationParsing.data
-	const adaptedPresentation: Presentation = APIToAppPresentationAdapter(
-		unadaptedPresentation
-	)
+			const unadaptedPresentation = presentationParsing.data
+			const adaptedPresentation: Presentation = APIToAppPresentationAdapter(
+				unadaptedPresentation
+			)
 
-	return adaptedPresentation
+			return adaptedPresentation
+		})(),
+		(async () => {
+			const supabase = await createSupabaseClient()
+
+			const { data, error } = await supabase
+				.from('presentations')
+				.select('updated_at')
+				.eq('id', id)
+				.single()
+
+			if (error) throw new Error('FAILED_TO_FETCH_SUPABASE_PRESENTATION')
+
+			return data.updated_at
+		})(),
+	])
+
+	return { ...adaptedPresentation, lastEditionTime }
 }

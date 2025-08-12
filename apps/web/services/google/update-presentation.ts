@@ -1,3 +1,5 @@
+import createSupabaseClient from '@/clients/factories/supabase'
+
 export default async function updatePresentation(
 	requests: unknown[],
 	presentationId: string,
@@ -14,6 +16,15 @@ export default async function updatePresentation(
 			body: JSON.stringify({ requests }),
 		}
 	)
+
+	if (response.ok) {
+		const supabase = await createSupabaseClient()
+
+		await supabase
+			.from('presentations')
+			.update({ updated_at: new Date().toISOString() })
+			.eq('id', presentationId)
+	}
 
 	return await response.text()
 }

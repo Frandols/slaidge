@@ -7,7 +7,10 @@ export default async function SlidePage({
 }) {
 	const { id, slideId } = await params
 
-	const url = `/api/presentations/${id}/slides/${slideId}/thumbnail`
-
-	return <Slide url={url} />
+	return (
+		<Slide
+			presentationId={id}
+			slideId={slideId}
+		/>
+	)
 }

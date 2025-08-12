@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from 'react'
 
 interface LastEditionTimeContextValues {
 	value: number
-	update: () => void
+	update: (newValue: number) => void
 }
 
 const LastEditionTimeContext =
@@ -21,11 +21,15 @@ export const useLastEditionTime = () => {
 	return context
 }
 
-export default function LastEditionTime(props: React.PropsWithChildren) {
-	const [value, setValue] = useState<number>(0)
+interface LastEditionTimeProps extends React.PropsWithChildren {
+	initialValue: number
+}
 
-	const update = () => {
-		setValue(Date.now())
+export default function LastEditionTime(props: LastEditionTimeProps) {
+	const [value, setValue] = useState<number>(props.initialValue)
+
+	const update = (newValue: number) => {
+		setValue(newValue)
 	}
 
 	return (

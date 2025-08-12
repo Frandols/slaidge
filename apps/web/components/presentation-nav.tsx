@@ -1,11 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 
-import { useLastEditionTime } from '@/contexts/last-edition-time'
 import { useSlides } from '@/contexts/slides'
 import FillerSkeleton from './filler-skeleton'
+import Slide from './slide'
 
 interface PresentationNavProps {
 	presentationId: string
@@ -13,7 +12,6 @@ interface PresentationNavProps {
 
 export default function PresentationNav(props: PresentationNavProps) {
 	const slides = useSlides()
-	const lastEditionTime = useLastEditionTime()
 
 	return (
 		<nav className='border-t z-10 p-4 flex gap-4 border-b md:border-b-0 bg-background overflow-auto'>
@@ -24,12 +22,9 @@ export default function PresentationNav(props: PresentationNavProps) {
 					className='h-full aspect-video relative hover:-translate-y-2 transition-transform rounded'
 				>
 					<FillerSkeleton />
-					<Image
-						src={`/api/presentations/${props.presentationId}/slides/${slide.id}/thumbnail?version=${lastEditionTime.value}`}
-						alt={'Slide thumbnail'}
-						layout='fill'
-						className='rounded'
-						unoptimized
+					<Slide
+						presentationId={props.presentationId}
+						slideId={slide.id}
 					/>
 				</Link>
 			))}

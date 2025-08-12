@@ -21,7 +21,7 @@ import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 export async function generateMetadata({
 	params,
 }: {
-	params: { id: string }
+	params: Promise<{ id: string }>
 }): Promise<Metadata> {
 	try {
 		const { id } = await params
@@ -33,7 +33,7 @@ export async function generateMetadata({
 
 		return { title: `${presentation.title} | Slaidge` }
 	} catch {
-		return { title: 'Presentacion | Slaidge' }
+		return { title: 'Presentación | Slaidge' }
 	}
 }
 
@@ -42,7 +42,7 @@ export default async function PresentationLayout({
 	params,
 }: {
 	children: React.ReactNode
-	params: { id: string }
+	params: Promise<{ id: string }>
 }) {
 	const { id } = await params
 
@@ -70,7 +70,7 @@ export default async function PresentationLayout({
 							}}
 						/>
 						<TogglablePresentationLayout>
-							<LastEditionTime>
+							<LastEditionTime initialValue={presentation.lastEditionTime}>
 								<Slides initialValue={presentation.slides}>
 									<div className='grid grid-rows-[1fr_133px] overflow-auto'>
 										<main className='p-4 overflow-hidden flex flex-col justify-center items-center relative'>

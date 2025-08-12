@@ -46,8 +46,9 @@ export default function Chat(props: ChatProps) {
 		if (!invokedUpdatePresentation) return
 
 		toast.success('Se actualizó la presentación')
-		lastEditionTime.update()
 		const updatedPresentation = await getPresentation(props.presentationId)
+
+		lastEditionTime.update(updatedPresentation.lastEditionTime)
 
 		if (
 			updatedPresentation.slides.some(

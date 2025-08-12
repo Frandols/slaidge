@@ -18,14 +18,16 @@ interface Presentation {
  * @param presentationId The presentation's ID.
  * @returns A Presentation object.
  */
-export default async function getPresentation(
-	presentationId: string
-): Promise<Presentation> {
+export default async function getPresentation(presentationId: string): Promise<
+	Presentation & {
+		lastEditionTime: number
+	}
+> {
 	const response = await fetch(`/api/presentations/${presentationId}`)
 
-	const data = await response.json()
+	const json = (await response.json()) as Presentation & {
+		lastEditionTime: number
+	}
 
-	const adaptedPresentation = data as Presentation
-
-	return adaptedPresentation
+	return json
 }
