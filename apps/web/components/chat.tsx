@@ -1,7 +1,7 @@
 'use client'
 
 import { Message, useChat } from '@ai-sdk/react'
-import { Loader2Icon, Wrench } from 'lucide-react'
+import { CircleCheckBig, CircleX, Loader2Icon, Wrench } from 'lucide-react'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -132,7 +132,13 @@ export default function Chat(props: ChatProps) {
 													<ToolInvocationMessage
 														key={`${message.id}-${i}`}
 														name={toolName}
-														loading={part.toolInvocation.state !== 'result'}
+														status={
+															part.toolInvocation.state !== 'result'
+																? 'loading'
+																: 'error' in part.toolInvocation.result
+																	? 'error'
+																	: 'success'
+														}
 													/>
 												)
 										}
@@ -190,19 +196,39 @@ function SystemMessageMark() {
 
 interface ToolInvocationMessageProps {
 	name: string
-	loading: boolean
+	status: 'loading' | 'success' | 'error'
 }
 
 export function ToolInvocationMessage(props: ToolInvocationMessageProps) {
 	return (
-		<div className='border-b p-4 my-4'>
-			<div className='flex items-center gap-4 text-sm text-muted-foreground'>
-				<Wrench className='text-accent-foreground' />
-				<span className='text-muted-foreground font-semibold'>
-					{props.name}
-				</span>
-				{props.loading ? (
+		<div className='border rounded-md border-dashed p-4 my-4'>
+			<div className='flex items-center gap-4 justify-between text-sm text-muted-foreground'>
+				<div className='flex items-center gap-4'>
+					<Wrench className='text-muted-foreground' />
+					<span className='text-accent-foreground font-semibold'>
+						{props.name}
+					</span>
+				</div>
+				{props.status === 'loading' ? (
 					<Loader2Icon className='ml-auto animate-spin' />
+				) : null}
+				{props.status === 'success' ? (
+					<p className='flex items-center'>
+						<CircleCheckBig
+							size={16}
+							className='text-green-500 inline mr-2'
+						/>
+						Completado
+					</p>
+				) : null}
+				{props.status === 'error' ? (
+					<p className='flex items-center'>
+						<CircleX
+							size={16}
+							className='text-destructive inline mr-2'
+						/>
+						Error
+					</p>
 				) : null}
 			</div>
 		</div>
