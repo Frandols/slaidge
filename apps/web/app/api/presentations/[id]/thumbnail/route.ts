@@ -20,7 +20,12 @@ async function getThumbnail(
 
 	if (!firstSlide) throw new Error('FIRST_SLIDE_NOT_FOUND')
 
-	return await getThumbnailImageResponse(id, firstSlide.id, accessToken)
+	return await getThumbnailImageResponse(
+		id,
+		firstSlide.id,
+		accessToken,
+		'SMALL'
+	)
 }
 
 export const GET = await withNextResponseJsonError(getThumbnail)

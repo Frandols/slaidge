@@ -1,9 +1,10 @@
 export default async function getThumbnailImageResponse(
 	presentationId: string,
 	slideId: string,
-	accessToken: string
+	accessToken: string,
+	size: 'LARGE' | 'SMALL' = 'LARGE'
 ) {
-	const thumbnailUrl = `https://slides.googleapis.com/v1/presentations/${presentationId}/pages/${slideId}/thumbnail?thumbnailProperties.mimeType=PNG&thumbnailProperties.thumbnailSize=LARGE`
+	const thumbnailUrl = `https://slides.googleapis.com/v1/presentations/${presentationId}/pages/${slideId}/thumbnail?thumbnailProperties.mimeType=PNG&thumbnailProperties.thumbnailSize=${size}`
 
 	const response = await fetch(thumbnailUrl, {
 		headers: {
