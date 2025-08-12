@@ -23,6 +23,7 @@ export default function TextPrompt({
 	onStop,
 	className,
 	creditBalance,
+	disabled,
 	...props
 }: TextPromptProps) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -62,7 +63,7 @@ export default function TextPrompt({
 					className
 				)}
 				onKeyDown={handleKeyDown}
-				disabled={showStop}
+				disabled={showStop || disabled}
 				ref={textareaRef}
 				{...props}
 			/>
@@ -87,7 +88,7 @@ export default function TextPrompt({
 					onClick={() => {
 						SpeechRecognition[listening ? 'stopListening' : 'startListening']()
 					}}
-					disabled={props.disabled || showStop}
+					disabled={disabled || showStop}
 				>
 					{listening ? <MicOff /> : <Mic />}
 				</Button>
@@ -101,7 +102,7 @@ export default function TextPrompt({
 							: 'bg-primary'
 					)}
 					onClick={showStop ? onStop : onSubmit}
-					disabled={(props.value === '' && !showStop) || props.disabled}
+					disabled={(props.value === '' && !showStop) || disabled}
 				>
 					{showStop ? (
 						<>

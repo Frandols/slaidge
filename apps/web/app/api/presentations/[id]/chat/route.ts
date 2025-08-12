@@ -7,7 +7,6 @@ import AIUsageToCreditsUsed from '@/adapters/ai-usage-to-credits-used'
 import prebuiltRequestsToAPIRequests from '@/adapters/prebuilt-requests-to-batch-update-requests'
 import anthropic from '@/clients/anthropic'
 import createSupabaseClient from '@/clients/factories/supabase'
-import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
 import guidelines from '@/prompts/guidelines'
 import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
@@ -103,6 +102,25 @@ const getPresentationPropertiesParamsSchema = z.object({
 	),
 })
 
+const fallbackResponse = new Response(
+	new ReadableStream({
+		start(controller) {
+			const encoder = new TextEncoder()
+
+			controller.enqueue(
+				encoder.encode(
+					'Ocurrió un error al procesar los mensajes, intenta nuevamente mas tarde'
+				)
+			)
+
+			controller.close()
+		},
+	}),
+	{
+		headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+	}
+)
+
 async function postChat(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
@@ -113,7 +131,7 @@ async function postChat(
 
 	const userCreditBalance = await getUserCreditBalance(userProfile.id)
 
-	if (userCreditBalance <= 0) throw new Error('NO_CREDITS')
+	if (userCreditBalance <= 0) return new Response('NO_CREDITS', { status: 400 })
 
 	const { id } = await params
 	const { messages } = await request.json()
@@ -128,7 +146,8 @@ async function postChat(
 		}
 	)
 
-	if (!response.ok) throw new Error('FAILED_TO_FETCH_PRESENTATION')
+	if (!response.ok)
+		return new Response('FAILED_TO_FETCH_PRESENTATION', { status: 400 })
 
 	const presentation = await response.json()
 
@@ -223,7 +242,7 @@ ${guidelines('editor')}`,
 	return result.toDataStreamResponse()
 }
 
-export const POST = await withNextResponseJsonError(postChat)
+export const POST = postChat
 
 export async function GET() {
 	return Response.json({}, { status: 200 })

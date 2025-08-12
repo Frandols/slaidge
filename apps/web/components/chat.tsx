@@ -65,16 +65,60 @@ export default function Chat(props: ChatProps) {
 
 	const messagesContainerRef = useRef<HTMLDivElement>(null)
 
-	const { messages, input, handleInputChange, handleSubmit, status, stop } =
-		useChat({
-			api: apiURL,
-			maxSteps: 2,
-			onFinish(message) {
-				if (message.role === 'user') return
+	const {
+		messages,
+		setMessages,
+		input,
+		handleInputChange,
+		handleSubmit,
+		status,
+		stop,
+	} = useChat({
+		api: apiURL,
+		maxSteps: 2,
+		onFinish(message) {
+			if (message.role === 'user') return
 
-				onFinishIncomingMessage(message)
-			},
-		})
+			onFinishIncomingMessage(message)
+		},
+		onError(error) {
+			const addMessage = (message: string) => {
+				setMessages((messages) => [
+					...messages,
+					{
+						id: `error-${Date.now()}`,
+						role: 'assistant',
+						content: message,
+						parts: [
+							{
+								type: 'text',
+								text: message,
+							},
+						],
+					},
+				])
+			}
+
+			switch (error.message) {
+				case 'NO_CREDITS':
+					addMessage(
+						'No tenés mas créditos, adquirilos para seguir interactuando.'
+					)
+
+					return
+				case 'INPUT_TOO_LARGE':
+					addMessage(
+						'El mensaje enviado tiene una longitud que no puede ser procesada.'
+					)
+
+					return
+				default:
+					addMessage(
+						'Ocurrió un error inesperado, vuelve a intentarlo mas tarde.'
+					)
+			}
+		},
+	})
 
 	useEffect(() => {
 		const messagesContainer = messagesContainerRef.current
@@ -163,6 +207,7 @@ export default function Chat(props: ChatProps) {
 						showStop={status === 'streaming' || status === 'submitted'}
 						onStop={stop}
 						creditBalance={creditBalance}
+						disabled={creditBalance <= 0}
 					>
 						{creditBalance !== undefined ? (
 							<>
