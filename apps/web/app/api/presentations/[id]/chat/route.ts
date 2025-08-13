@@ -8,7 +8,7 @@ import prebuiltRequestsToAPIRequests from '@/adapters/prebuilt-requests-to-batch
 import anthropic from '@/clients/anthropic'
 import createSupabaseClient from '@/clients/factories/supabase'
 import requireAccessToken from '@/guards/require-access-token'
-import guidelines from '@/prompts/guidelines'
+import editor from '@/prompts/editor'
 import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
 import getMaxOutputTokens from '@/services/anthropic/get-max-output-tokens'
 import getUserProfile from '@/services/google/get-user-profile'
@@ -102,25 +102,6 @@ const getPresentationPropertiesParamsSchema = z.object({
 	),
 })
 
-const fallbackResponse = new Response(
-	new ReadableStream({
-		start(controller) {
-			const encoder = new TextEncoder()
-
-			controller.enqueue(
-				encoder.encode(
-					'Ocurrió un error al procesar los mensajes, intenta nuevamente mas tarde'
-				)
-			)
-
-			controller.close()
-		},
-	}),
-	{
-		headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-	}
-)
-
 async function postChat(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
@@ -153,8 +134,7 @@ async function postChat(
 
 	const streamTextArgs = {
 		model: anthropic('claude-4-sonnet-20250514'),
-		system: `You are the Slaidge edition manager, you are in charge of editing a presentation through the given tools.
-${guidelines('editor')}`,
+		system: editor,
 		messages,
 		tools: {
 			updatePresentation: {

@@ -20,8 +20,8 @@ export const createSectionOpeningSlideParamsSchema = z.object({
 			content: z
 				.string()
 				.min(1)
-				.max(50)
-				.describe('Content of the subtitle, 50 characters maximum'),
+				.max(100)
+				.describe('Content of the subtitle, 100 characters maximum'),
 		})
 		.optional(),
 })
