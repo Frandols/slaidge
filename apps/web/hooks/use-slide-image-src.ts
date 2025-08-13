@@ -11,20 +11,18 @@ type SlideImage =
 
 export default function useSlideImageSrc(
 	presentationId: string,
-	slideId: string
+	lastEditionTime: number,
+	slideId?: string
 ) {
-	const lastEditionTime = useLastEditionTime()
 	const [slideImage, setSlideImage] = useState<SlideImage>({
 		status: 'loading',
 	})
 
 	useEffect(() => {
-		getSlideImageBlob(presentationId, slideId, lastEditionTime.value).then(
-			(blob) => {
-				setSlideImage({ status: 'success', value: blob })
-			}
-		)
-	}, [lastEditionTime.value])
+		getSlideImageBlob(presentationId, lastEditionTime, slideId).then((blob) => {
+			setSlideImage({ status: 'success', value: blob })
+		})
+	}, [lastEditionTime])
 
 	if (slideImage.status !== 'success') return null
 
@@ -33,10 +31,12 @@ export default function useSlideImageSrc(
 
 async function getSlideImageBlob(
 	presentationId: string,
-	slideId: string,
-	lastEditionTime: number
+	lastEditionTime: number,
+	slideId?: string
 ) {
-	const id = `${presentationId}-${slideId}-${lastEditionTime}`
+	const id = slideId
+		? `${presentationId}-${slideId}-${lastEditionTime}`
+		: `${presentationId}-${lastEditionTime}`
 	const cache = await caches.open('slide_images')
 
 	const cachedImage = await cache.match(id)
@@ -44,7 +44,9 @@ async function getSlideImageBlob(
 	if (cachedImage) return cachedImage.blob()
 
 	const response = await fetch(
-		`/api/presentations/${presentationId}/slides/${slideId}/thumbnail?version=${lastEditionTime}`
+		slideId
+			? `/api/presentations/${presentationId}/slides/${slideId}/thumbnail?version=${lastEditionTime}`
+			: `/api/presentations/${presentationId}/thumbnail?version=${lastEditionTime}`
 	)
 
 	await cache.put(id, response.clone())

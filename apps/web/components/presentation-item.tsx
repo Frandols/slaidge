@@ -5,6 +5,7 @@ import { es } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import useSlideImageSrc from '@/hooks/use-slide-image-src'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 
 interface PresentationItemProps {
@@ -26,13 +27,9 @@ export default function PresentationItem(props: PresentationItemProps) {
 		>
 			<div className='h-full flex flex-col gap-2'>
 				<div className='aspect-video bg-muted-foreground rounded-lg w-full relative'>
-					<Image
-						src={`/api/presentations/${props.id}/thumbnail`}
-						alt={`${props.id} thumbnail`}
-						layout='fill'
-						className='aspect-video bg-background rounded-lg'
-						objectFit='contain'
-						unoptimized
+					<PresentationItemThumbnail
+						id={props.id}
+						updatedAt={props.updatedAt}
 					/>
 				</div>
 				<div className='flex flex-col gap-2 p-2'>
@@ -61,5 +58,30 @@ export function PresentationItemSkeleton() {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+interface PresentationItemThumbnailProps {
+	id: string
+	updatedAt: string
+}
+
+function PresentationItemThumbnail(props: PresentationItemThumbnailProps) {
+	const slideImageSrc = useSlideImageSrc(
+		props.id,
+		new Date(props.updatedAt).getTime()
+	)
+
+	if (slideImageSrc === null) return null
+
+	return (
+		<Image
+			src={slideImageSrc}
+			alt={`${props.id} thumbnail`}
+			layout='fill'
+			className='aspect-video bg-background rounded-lg'
+			objectFit='contain'
+			unoptimized
+		/>
 	)
 }

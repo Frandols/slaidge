@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 
+import { useLastEditionTime } from '@/contexts/last-edition-time'
 import useSlideImageSrc from '@/hooks/use-slide-image-src'
 
 interface SlideProps {
@@ -10,7 +11,12 @@ interface SlideProps {
 }
 
 export default function Slide(props: SlideProps) {
-	const slideImageSrc = useSlideImageSrc(props.presentationId, props.slideId)
+	const lastEditionTime = useLastEditionTime()
+	const slideImageSrc = useSlideImageSrc(
+		props.presentationId,
+		lastEditionTime.value,
+		props.slideId
+	)
 
 	if (slideImageSrc === null) return null
 
