@@ -49,15 +49,13 @@ export async function middleware(request: NextRequest) {
 			maxAge: 60 * 60,
 		})
 
-		if (session.refresh_token) {
-			cookieStore.set('refresh_token', session.refresh_token, {
-				httpOnly: true,
-				secure: true,
-				sameSite: 'lax',
-				path: '/',
-				maxAge: 60 * 60 * 24 * 30,
-			})
-		}
+		cookieStore.set('refresh_token', refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			path: '/',
+			maxAge: 60 * 60 * 24 * 30,
+		})
 
 		return NextResponse.redirect(new URL(request.nextUrl))
 	} catch {
