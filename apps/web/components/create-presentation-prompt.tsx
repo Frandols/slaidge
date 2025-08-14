@@ -7,20 +7,18 @@ import { toast } from 'sonner'
 import ConnectYourAccountDialog from '@/components/connect-your-account-dialog'
 import TextPrompt from '@/components/text-prompt'
 import createPresentation from '@/services/create-presentation'
-import { fa } from 'zod/v4/locales'
+import BuyCreditsDialog from './buy-credits-dialog'
 
 interface CreatePresentationPromptProps extends React.PropsWithChildren {
 	creditBalance?: number
 }
 
+type DialogShowing = 'none' | 'connect-account' | 'buy-credits'
+
 export default function CreatePresentationPrompt(
 	props: CreatePresentationPromptProps
 ) {
-	const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false)
-
-	const showDialog = () => {
-		setIsDialogVisible(true)
-	}
+	const [dialogShowing, setDialogShowing] = useState<DialogShowing>('none')
 
 	const abortControllerRef = useRef<AbortController | null>(null)
 	const navigation = useRouter()
@@ -54,19 +52,18 @@ export default function CreatePresentationPrompt(
 		} catch (error) {
 			if (!(error instanceof Error)) return
 
-			if (error.message === 'UNAUTHENTICATED') {
-				showDialog()
+			switch (error.message) {
+				case 'NO_CREDITS':
+					setDialogShowing('buy-credits')
 
-				return
+					return
+				case 'UNAUTHENTICATED':
+					setDialogShowing('connect-account')
+
+					return
+				default:
+					toast.error('Lo sentimos, ocurrió un error al crear la presentación')
 			}
-
-			if (error.message === 'signal is aborted without reason') {
-				toast.success('Se frenó la creación')
-
-				return
-			}
-
-			toast.error('Lo sentimos, ocurrió un error al crear la presentación')
 		} finally {
 			setSubmitting(false)
 			toast.dismiss(creatingPresentationToastId)
@@ -83,15 +80,28 @@ export default function CreatePresentationPrompt(
 		abortControllerRef.current.abort()
 	}
 
+	const onDialogOpenChange = (open: boolean) => {
+		if (open) return
+
+		setDialogShowing('none')
+	}
+
 	return (
 		<>
 			<ConnectYourAccountDialog
-				open={isDialogVisible}
-				onOpenChange={setIsDialogVisible}
+				open={dialogShowing === 'connect-account'}
+				onOpenChange={onDialogOpenChange}
 			>
 				Necesitamos poder agregar las presentaciones que crees a tu
 				almacenamiento de Google Slides.
 			</ConnectYourAccountDialog>
+			{props.creditBalance !== undefined ? (
+				<BuyCreditsDialog
+					currentCreditBalance={props.creditBalance}
+					open={dialogShowing === 'buy-credits'}
+					onOpenChange={onDialogOpenChange}
+				/>
+			) : null}
 			<TextPrompt
 				value={text}
 				onChange={onChange}

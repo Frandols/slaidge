@@ -17,9 +17,9 @@ export default async function createPresentation(
 		signal: abortController.signal,
 	})
 
-	const data = await response.json()
+	const json = await response.json()
 
-	if (response.status !== 201) throw new Error(data.error)
+	if (response.status !== 201) throw new Error(json.error)
 
-	return data as { presentationId: string }
+	return json as { presentationId: string }
 }
