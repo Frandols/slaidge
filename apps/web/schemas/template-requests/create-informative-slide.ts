@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
+import themeSchema from '@/schemas/theme'
 import hexToRgb from '@/utils/hex-to-rgb'
-import themeSchema from '../theme'
 
 export const createInformativeSlideParamsSchema = z.object({
 	id: z.string().min(1).describe('ID of the new slide'),

@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
-import generateQuickChartURL from '@/utils/generate-quickchart-url'
+import themeSchema from '@/schemas/theme'
 import hexToRgb from '@/utils/hex-to-rgb'
-import themeSchema from '../theme'
 
 const areasFontSizes: Record<number, number> = {
 	22500: 12,
@@ -11,7 +10,7 @@ const areasFontSizes: Record<number, number> = {
 	135000: 18,
 }
 
-const elementSettingsCoreSchema = z.object({
+const elementSchema = z.object({
 	id: z.string().min(1).describe('ID of the element'),
 	row: z
 		.tuple([
@@ -31,6 +30,9 @@ const elementSettingsCoreSchema = z.object({
 		.describe(
 			'A tuple where the first element is a tuple that specifies the rows where the element starts and ends, and the second one specifies the amount of rows (1 minumum, 2 maximum). For example: [[1, 2], 2] -> Element uses rows 1 and 2, in a grid of two rows'
 		),
+})
+
+const elementWithPositionSchema = elementSchema.extend({
 	col: z
 		.tuple([
 			z
@@ -51,7 +53,7 @@ const elementSettingsCoreSchema = z.object({
 		),
 })
 
-export const textElementSettingsSchema = elementSettingsCoreSchema.extend({
+const textElementSchema = elementSchema.extend({
 	type: z.literal('text'),
 	content: z
 		.string()
@@ -60,39 +62,24 @@ export const textElementSettingsSchema = elementSettingsCoreSchema.extend({
 		.describe('Content of the text, 300 characters maximum'),
 })
 
-const imageElementSettingsSchema = elementSettingsCoreSchema.extend({
+const imageElementSchema = elementSchema.extend({
 	type: z.literal('image'),
 	url: z.string().min(1).url().describe('URL of the image'),
 })
 
-const chartElementSettingsSchema = elementSettingsCoreSchema.extend({
-	type: z.literal('chart'),
-	chartType: z.enum(['BAR', 'LINE', 'PIE']).describe('Type of chart'),
-	title: z
-		.string()
-		.min(1)
-		.max(50)
-		.describe('Title of the chart, 50 characters maximum'),
-	data: z
-		.array(
-			z.object({
-				label: z.string().min(1),
-				value: z.number(),
-			})
-		)
-		.min(1)
-		.describe('Data for the chart'),
-})
-
 export const informativeElementSchema = z.union([
-	textElementSettingsSchema,
-	imageElementSettingsSchema,
-	chartElementSettingsSchema,
+	textElementSchema,
+	imageElementSchema,
+])
+
+const informativeElementWithPositionSchema = z.union([
+	elementWithPositionSchema.merge(textElementSchema),
+	elementWithPositionSchema.merge(imageElementSchema),
 ])
 
 export const createInformativeElementParamsSchema = z.object({
 	slideId: z.string().min(1).describe('ID of the slide to create the element'),
-	element: informativeElementSchema,
+	element: informativeElementWithPositionSchema,
 })
 
 export default function createInformativeElement(
@@ -167,29 +154,11 @@ export default function createInformativeElement(
 		]
 	}
 
-	if (params.element.type === 'image')
-		return [
-			{
-				createImage: {
-					objectId: params.element.id,
-					url: params.element.url,
-					elementProperties,
-				},
-			},
-		]
-
-	const chartUrl = generateQuickChartURL({
-		type: params.element.chartType,
-		data: params.element.data,
-		title: params.element.title,
-		theme,
-	})
-
 	return [
 		{
 			createImage: {
 				objectId: params.element.id,
-				url: chartUrl,
+				url: params.element.url,
 				elementProperties,
 			},
 		},

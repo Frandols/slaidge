@@ -4,29 +4,26 @@ import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 
 import AIUsageToCreditsUsed from '@/adapters/ai-usage-to-credits-used'
-import prebuiltRequestsToAPIRequests from '@/adapters/prebuilt-requests-to-batch-update-requests'
+import templateToRawRequests from '@/adapters/template-to-raw-requests'
 import anthropic from '@/clients/anthropic'
 import createSupabaseClient from '@/clients/factories/supabase'
 import requireAccessToken from '@/guards/require-access-token'
 import editor from '@/prompts/editor'
-import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
+import templateRequestsSchema from '@/schemas/template-requests'
 import getMaxOutputTokens from '@/services/anthropic/get-max-output-tokens'
 import getUserProfile from '@/services/google/get-user-profile'
 import updatePresentation from '@/services/google/update-presentation'
 import { getPresentationTheme } from '@/services/supabase/get-presentation-theme'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 
-async function usePrebuiltRequests(
-	args: z.infer<typeof prebuiltRequestsSchema>,
+async function useTemplateRequests(
+	args: z.infer<typeof templateRequestsSchema>,
 	presentationId: string,
 	accessToken: string
 ) {
 	const theme = await getPresentationTheme(presentationId)
 
-	const batchUpdateRequests = prebuiltRequestsToAPIRequests(
-		args.requests,
-		theme
-	)
+	const batchUpdateRequests = templateToRawRequests(args.requests, theme)
 
 	return await updatePresentation(
 		batchUpdateRequests,
@@ -37,9 +34,9 @@ async function usePrebuiltRequests(
 
 const updatesSchema = z.array(
 	z.discriminatedUnion('type', [
-		z.object({ type: z.literal('prebuilt') }).merge(prebuiltRequestsSchema),
+		z.object({ type: z.literal('template') }).merge(templateRequestsSchema),
 		z.object({
-			type: z.literal('custom'),
+			type: z.literal('raw'),
 			requests: z.array(z.object({}).passthrough()),
 		}),
 	])
@@ -54,9 +51,9 @@ async function useUpdates(
 		const results = []
 
 		for (const update of updates) {
-			if (update.type === 'prebuilt') {
+			if (update.type === 'template') {
 				results.push(
-					await usePrebuiltRequests(
+					await useTemplateRequests(
 						{
 							requests: update.requests,
 						},

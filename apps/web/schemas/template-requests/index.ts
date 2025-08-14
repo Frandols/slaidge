@@ -1,4 +1,8 @@
 import { z } from 'zod'
+
+import createChartSlide, {
+	createChartSlideParamsSchema,
+} from './create-chart-slide'
 import createInformativeElement, {
 	createInformativeElementParamsSchema,
 } from './create-informative-element'
@@ -9,13 +13,14 @@ import createSectionOpeningSlide, {
 	createSectionOpeningSlideParamsSchema,
 } from './create-section-opening-slide'
 
-export const prebuiltRequestsExecutables = {
+export const templateRequestsExecutables = {
 	createInformativeSlide,
 	createSectionOpeningSlide,
 	createInformativeElement,
+	createChartSlide,
 }
 
-const prebuiltRequestsSchema = z.object({
+const templateRequestsSchema = z.object({
 	requests: z.array(
 		z.union([
 			z.object({ createInformativeSlide: createInformativeSlideParamsSchema }),
@@ -25,8 +30,11 @@ const prebuiltRequestsSchema = z.object({
 			z.object({
 				createInformativeElement: createInformativeElementParamsSchema,
 			}),
+			z.object({
+				createChartSlide: createChartSlideParamsSchema,
+			}),
 		])
 	),
 })
 
-export default prebuiltRequestsSchema
+export default templateRequestsSchema

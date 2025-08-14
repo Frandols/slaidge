@@ -4,14 +4,14 @@ import { z } from 'zod'
 import zodToJsonSchema from 'zod-to-json-schema'
 
 import AIUsageToCreditsUsed from '@/adapters/ai-usage-to-credits-used'
-import prebuiltRequestsToAPIRequests from '@/adapters/prebuilt-requests-to-batch-update-requests'
+import templateToRawRequests from '@/adapters/template-to-raw-requests'
 import anthropic from '@/clients/anthropic'
 import createSupabaseClient from '@/clients/factories/supabase'
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
 import creator from '@/prompts/creator'
-import prebuiltRequestsSchema from '@/schemas/prebuilt-requests'
 import { APIPresentationSchema } from '@/schemas/presentation'
+import templateRequestsSchema from '@/schemas/template-requests'
 import themeSchema from '@/schemas/theme'
 import getMaxOutputTokens from '@/services/anthropic/get-max-output-tokens'
 import getUserProfile from '@/services/google/get-user-profile'
@@ -39,7 +39,7 @@ async function postPresentation(request: NextRequest) {
 		prompt,
 		schema: z.object({
 			title: z.string().min(1).describe('Title for the presentation'),
-			update: prebuiltRequestsSchema,
+			update: templateRequestsSchema,
 			theme: themeSchema,
 		}),
 	}
@@ -100,7 +100,7 @@ async function postPresentation(request: NextRequest) {
 		await updatePresentation(
 			[
 				{ deleteObject: { objectId: 'p' } },
-				...prebuiltRequestsToAPIRequests(object.update.requests, object.theme),
+				...templateToRawRequests(object.update.requests, object.theme),
 			],
 			presentation.presentationId,
 			accessToken
