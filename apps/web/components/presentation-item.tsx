@@ -2,11 +2,11 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
-import Image from 'next/image'
 import Link from 'next/link'
 
 import useSlideImageSrc from '@/hooks/use-slide-image-src'
 import { Skeleton } from '@workspace/ui/components/skeleton'
+import Image from 'next/image'
 
 interface PresentationItemProps {
 	id: string
@@ -26,7 +26,8 @@ export default function PresentationItem(props: PresentationItemProps) {
 			}}
 		>
 			<div className='h-full flex flex-col gap-2'>
-				<div className='aspect-video bg-muted-foreground rounded-lg w-full relative'>
+				<div className='aspect-video rounded-lg w-full relative'>
+					<PresentationItemThumbnailSkeleton />
 					<PresentationItemThumbnail
 						id={props.id}
 						updatedAt={props.updatedAt}
@@ -51,7 +52,7 @@ export function PresentationItemSkeleton() {
 	return (
 		<div className='group'>
 			<div className='h-full flex flex-col gap-2'>
-				<Skeleton className='aspect-video rounded-lg w-full' />
+				<PresentationItemThumbnailSkeleton />
 				<div className='flex flex-col gap-2 p-2'>
 					<Skeleton className='w-full h-6' />
 					<Skeleton className='w-full h-5' />
@@ -84,4 +85,8 @@ function PresentationItemThumbnail(props: PresentationItemThumbnailProps) {
 			unoptimized
 		/>
 	)
+}
+
+function PresentationItemThumbnailSkeleton() {
+	return <Skeleton className='aspect-video rounded-lg w-full' />
 }
