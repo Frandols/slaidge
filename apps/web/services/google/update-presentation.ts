@@ -1,5 +1,11 @@
-import createSupabaseClient from '@/clients/factories/supabase'
-
+/**
+ * Update a presentation using raw requests.
+ *
+ * @param requests Raw requests array.
+ * @param presentationId The presentation's ID.
+ * @param accessToken User's access token.
+ * @returns An object with the response text and a success flag.
+ */
 export default async function updatePresentation(
 	requests: unknown[],
 	presentationId: string,
@@ -17,14 +23,5 @@ export default async function updatePresentation(
 		}
 	)
 
-	if (response.ok) {
-		const supabase = await createSupabaseClient()
-
-		await supabase
-			.from('presentations')
-			.update({ updated_at: new Date().toISOString() })
-			.eq('id', presentationId)
-	}
-
-	return await response.text()
+	return { success: response.ok, text: await response.text() }
 }

@@ -25,11 +25,22 @@ async function useTemplateRequests(
 
 	const batchUpdateRequests = templateToRawRequests(args.requests, theme)
 
-	return await updatePresentation(
+	const { success, text } = await updatePresentation(
 		batchUpdateRequests,
 		presentationId,
 		accessToken
 	)
+
+	if (success) {
+		const supabase = await createSupabaseClient()
+
+		await supabase
+			.from('presentations')
+			.update({ updated_at: new Date().toISOString() })
+			.eq('id', presentationId)
+	}
+
+	return text
 }
 
 const updatesSchema = z.array(

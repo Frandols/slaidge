@@ -97,7 +97,7 @@ async function postPresentation(request: NextRequest) {
 	const presentation = parsing.data
 
 	try {
-		await updatePresentation(
+		const { success } = await updatePresentation(
 			[
 				{ deleteObject: { objectId: 'p' } },
 				...templateToRawRequests(object.update.requests, object.theme),
@@ -105,6 +105,8 @@ async function postPresentation(request: NextRequest) {
 			presentation.presentationId,
 			accessToken
 		)
+
+		if (!success) throw new Error('FAILED_TO_UPDATE_PRESENTATION')
 
 		const { error } = await supabase.from('presentations').insert({
 			id: presentation.presentationId,
