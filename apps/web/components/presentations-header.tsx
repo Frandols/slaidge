@@ -1,6 +1,16 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
 import sendFeedback from '@/actions/send-feedback'
+import LinkBadge from '@/components/link-badge'
+import Logo from '@/components/logo'
+import UserMenu from '@/components/user-menu'
+
 import { Button } from '@workspace/ui/components/button'
 import {
 	Popover,
@@ -8,14 +18,6 @@ import {
 	PopoverTrigger,
 } from '@workspace/ui/components/popover'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { Loader2 } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import LinkBadge from './link-badge'
-import Logo from './logo'
-import UserMenu from './user-menu'
 
 interface PresentationHeaderProps {
 	presentation?: {
@@ -79,7 +81,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 						</LinkBadge>
 					</>
 				) : (
-					<>
+					<div className='flex gap-2 items-center rounded-md p-1 px-2'>
 						<Image
 							src={props.user.avatarUrl}
 							alt={props.user.name}
@@ -91,7 +93,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 						<p className='text-muted-foreground hidden text-nowrap md:block'>
 							Presentaciones de {props.user.name.split(' ')[0]}
 						</p>
-					</>
+					</div>
 				)}
 			</div>
 			<div className='flex gap-2 items-center'>
