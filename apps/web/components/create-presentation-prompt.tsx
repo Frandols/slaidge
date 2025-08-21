@@ -123,7 +123,6 @@ export default function CreatePresentationPrompt(
 					'la comunicación no verbal en los animales',
 				]}
 				creditBalance={props.creditBalance}
-				onAttachFiles={() => {}}
 			>
 				{props.children}
 			</TextPrompt>
