@@ -106,7 +106,7 @@ export default function CreatePresentationPrompt(
 				value={text}
 				onChange={onChange}
 				onSubmit={onSubmit}
-				showStop={false}
+				stoppable={false}
 				disabled={submitting}
 				onStop={onStop}
 				placeholder='Crea una presentacion sobre '
@@ -123,6 +123,7 @@ export default function CreatePresentationPrompt(
 					'la comunicación no verbal en los animales',
 				]}
 				creditBalance={props.creditBalance}
+				onAttachFiles={() => {}}
 			>
 				{props.children}
 			</TextPrompt>
