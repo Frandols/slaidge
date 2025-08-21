@@ -106,7 +106,7 @@ export default function CreatePresentationPrompt(
 				value={text}
 				onChange={onChange}
 				onSubmit={onSubmit}
-				stoppable={false}
+				showStop={false}
 				disabled={submitting}
 				onStop={onStop}
 				placeholder='Crea una presentacion sobre '
