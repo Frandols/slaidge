@@ -22,6 +22,7 @@ interface PromptTextareaProps extends TypewriterTextareaProps {
 	onStop: () => void
 	creditBalance?: number
 	onAttachFiles: (fileList: FileList) => void
+	children?: React.ReactNode
 }
 
 export default function PromptTextarea({
@@ -75,7 +76,7 @@ export default function PromptTextarea({
 				)}
 				onKeyDown={handleKeyDown}
 				disabled={stoppable || disabled}
-				ref={textareaRef}
+				ref={textareaRef as any}
 				{...props}
 			/>
 			<div className='absolute bottom-0 left-0 w-full h-12 p-2 gap-2 flex justify-between'>
@@ -164,11 +165,10 @@ export default function PromptTextarea({
 	)
 }
 
-const TypewriterTextarea: React.FC<TypewriterTextareaProps> = ({
-	placeholder = '',
-	placeholders = [],
-	...rest
-}) => {
+const TypewriterTextarea = React.forwardRef<
+	HTMLTextAreaElement,
+	TypewriterTextareaProps
+>(({ placeholder = '', placeholders = [], ...rest }, ref) => {
 	const [displayedPlaceholder, setDisplayedPlaceholder] = useState(placeholder)
 	const index = useRef(0)
 	const subIndex = useRef(0)
@@ -215,7 +215,10 @@ const TypewriterTextarea: React.FC<TypewriterTextareaProps> = ({
 	return (
 		<Textarea
 			{...rest}
+			ref={ref as any}
 			placeholder={displayedPlaceholder}
 		/>
 	)
-}
+})
+
+TypewriterTextarea.displayName = 'TypewriterTextarea'
