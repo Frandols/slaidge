@@ -38,6 +38,8 @@ const offerSchema = z.object({
 	id: offerIdSchema,
 })
 
+type OfferFormValues = z.infer<typeof offerSchema>
+
 interface BuyCreditsDialogProps extends React.ComponentProps<typeof Dialog> {
 	currentCreditBalance: number
 }
@@ -45,7 +47,7 @@ interface BuyCreditsDialogProps extends React.ComponentProps<typeof Dialog> {
 export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 	const [selectedAmount, setSelectedAmount] = useState<number>(50)
 
-	const form = useForm({
+	const form = useForm<OfferFormValues>({
 		resolver: zodResolver(offerSchema),
 		defaultValues: {
 			id: CREDITS_50,
@@ -83,7 +85,7 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 							: 'Purchase them to continue editing your presentations'}
 					</DialogDescription>
 				</DialogHeader>
-				<Form {...form}>
+				<Form {...(form as any)}>
 					<form className='grid gap-2 grid-cols-[repeat(3,_minmax(125px,_1fr))]'>
 						<OfferRadioInput
 							offer={{ id: CREDITS_50 }}
@@ -140,11 +142,11 @@ function OfferRadioInput<T extends z.infer<typeof offerSchema>>({
 	trending = false,
 	...props
 }: OfferRadioInputProps<T>) {
-	const form = useFormContext()
+	const form = useFormContext<OfferFormValues>()
 
 	return (
 		<FormField
-			control={form.control}
+			control={form.control as any}
 			name='id'
 			render={({ field }) => (
 				<FormItem className='grid grid-cols-[1rem_1fr] border rounded-md p-3'>
