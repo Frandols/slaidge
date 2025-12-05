@@ -5,12 +5,16 @@ export default async function SlidePage({
 }: {
 	params: Promise<{ id: string; slideId: string }>
 }) {
-	const { id, slideId } = await params
+	const { id: presentationId, slideId } = await params
 
 	return (
 		<Slide
-			presentationId={id}
-			slideId={slideId}
+			presentation={{
+				id: presentationId,
+			}}
+			slide={{
+				id: slideId,
+			}}
 		/>
 	)
 }

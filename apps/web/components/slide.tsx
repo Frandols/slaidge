@@ -4,18 +4,30 @@ import Image from 'next/image'
 
 import { useLastEditionTime } from '@/contexts/last-edition-time'
 import useSlideImageSrc from '@/hooks/use-slide-image-src'
+import { cn } from '@workspace/ui/lib/utils'
+import React from 'react'
 
-interface SlideProps {
-	presentationId: string
-	slideId: string
+interface SlideProps
+	extends Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'> {
+	presentation: {
+		id: string
+	}
+	slide: {
+		id: string
+	}
 }
 
-export default function Slide(props: SlideProps) {
+export default function Slide({
+	presentation,
+	slide,
+	className,
+	...props
+}: SlideProps) {
 	const lastEditionTime = useLastEditionTime()
 	const slideImageSrc = useSlideImageSrc(
-		props.presentationId,
+		presentation.id,
 		lastEditionTime.value,
-		props.slideId
+		slide.id
 	)
 
 	if (slideImageSrc === null) return null
@@ -25,8 +37,9 @@ export default function Slide(props: SlideProps) {
 			src={slideImageSrc}
 			alt='Slide image'
 			layout='fill'
-			className='rounded'
+			className={cn(className, 'rounded-xl')}
 			unoptimized
+			{...props}
 		/>
 	)
 }

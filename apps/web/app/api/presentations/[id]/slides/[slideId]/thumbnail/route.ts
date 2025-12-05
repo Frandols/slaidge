@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
-
 import withNextResponseJsonError from '@/decorators/with-next-response-json-error'
 import requireAccessToken from '@/guards/require-access-token'
 import getThumbnailImageResponse from '@/services/google/get-thumbnail-image-response'
+import { NextRequest } from 'next/server'
 
 async function getThumbnail(
 	request: NextRequest,

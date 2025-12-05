@@ -1,5 +1,10 @@
-import { APIUserProfileSchema } from '@/schemas/user'
-import APIToAppUserProfileAdapter from '@/schemas/user/adapters/api-to-app'
+import z from 'zod'
+
+const googleUserProfileSchema = z.object({
+	sub: z.string().min(1),
+	name: z.string().min(1),
+	picture: z.string().min(1).url(),
+})
 
 interface UserProfile {
 	id: string
@@ -31,13 +36,17 @@ export default async function getUserProfile(
 
 	const json = await response.json()
 
-	const parsing = APIUserProfileSchema.safeParse(json)
+	const parsing = googleUserProfileSchema.safeParse(json)
 
 	if (!parsing.success) throw new Error('MALFORMED_USER_PROFILE')
 
 	const unadaptedUserProfile = parsing.data
 
-	const adaptedUserProfile = APIToAppUserProfileAdapter(unadaptedUserProfile)
+	const adaptedUserProfile = {
+		id: unadaptedUserProfile.sub,
+		name: unadaptedUserProfile.name,
+		avatarUrl: unadaptedUserProfile.picture,
+	}
 
 	return adaptedUserProfile
 }

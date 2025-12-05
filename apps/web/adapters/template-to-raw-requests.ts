@@ -13,7 +13,8 @@ import themeSchema from '@/schemas/theme'
  */
 export default function templateToRawRequests(
 	requests: z.infer<typeof templateRequestsSchema>['requests'],
-	theme: z.infer<typeof themeSchema>
+	theme: z.infer<typeof themeSchema>,
+	presentationId: string
 ) {
 	return requests
 		.map((request) => {
@@ -34,7 +35,7 @@ export default function templateToRawRequests(
 			>[0]
 
 			// @ts-expect-error
-			return executable(args, theme)
+			return executable(args, theme, presentationId)
 		})
 		.flat()
 }

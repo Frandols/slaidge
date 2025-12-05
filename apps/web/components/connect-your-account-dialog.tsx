@@ -11,8 +11,12 @@ export default function ConnectYourAccountDialog(
 	return (
 		<Dialog {...props}>
 			<DialogContent className='w-96'>
-				<DialogTitle>Conectá tu cuenta</DialogTitle>
-				<p className='text-muted-foreground text-sm'>{props.children}</p>
+				<DialogTitle>Connect your accound</DialogTitle>
+				<p className='text-muted-foreground text-sm'>
+					We need to add the presentations you create to your Google Slides
+					storage.
+				</p>
+				{props.children}
 				<ContinueWithGoogleButton />
 			</DialogContent>
 		</Dialog>

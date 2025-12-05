@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import { useLastEditionTime } from '@/contexts/last-edition-time'
-
 type SlideImage =
 	| { status: 'error' | 'loading' }
 	| {
@@ -9,6 +7,14 @@ type SlideImage =
 			value: Blob
 	  }
 
+/**
+ * Get the image URL of a slide.
+ *
+ * @param presentationId The ID of the presentation.
+ * @param lastEditionTime The last edition time of the presentation.
+ * @param slideId The ID of the slide. If not provided, the thumbnail of the first slide will be returned.
+ * @returns The image URL of the slide, or null if the image is still loading or there was an error.
+ */
 export default function useSlideImageSrc(
 	presentationId: string,
 	lastEditionTime: number,
@@ -37,7 +43,19 @@ async function getSlideImageBlob(
 	const id = slideId
 		? `${presentationId}-${slideId}-${lastEditionTime}`
 		: `${presentationId}-${lastEditionTime}`
+
 	const cache = await caches.open('slide_images')
+
+	for (const request of await cache.keys()) {
+		const key = request.url.split('/').pop() ?? ''
+
+		if (
+			key.startsWith(`${presentationId}${slideId ? `-${slideId}` : ''}-`) &&
+			key !== id
+		) {
+			await cache.delete(request)
+		}
+	}
 
 	const cachedImage = await cache.match(id)
 

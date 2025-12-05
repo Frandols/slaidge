@@ -1,15 +1,15 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { HTMLAttributes, useState } from 'react'
 import { toast } from 'sonner'
 
 import sendFeedback from '@/actions/send-feedback'
-import LinkBadge from '@/components/link-badge'
-import Logo from '@/components/logo'
-import UserMenu from '@/components/user-menu'
+import BadgeLink from '@/components/badge-link'
+import LogoLink from '@/components/logo-link'
+import UserDropdownMenu from '@/components/user-dropdown-menu'
 
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -18,8 +18,9 @@ import {
 	PopoverTrigger,
 } from '@workspace/ui/components/popover'
 import { Textarea } from '@workspace/ui/components/textarea'
+import { cn } from '@workspace/ui/lib/utils'
 
-interface PresentationHeaderProps {
+interface PresentationsHeaderProps extends HTMLAttributes<HTMLElement> {
 	presentation?: {
 		id: string
 		title: string
@@ -27,76 +28,91 @@ interface PresentationHeaderProps {
 	user: {
 		avatarUrl: string
 		name: string
-		creditBalance: {
-			value: number
-		}
+		creditBalance: number
 	}
 }
 
-export default function PresentationsHeader(props: PresentationHeaderProps) {
+export default function PresentationsHeader({
+	presentation,
+	user,
+	className,
+	children,
+	...props
+}: PresentationsHeaderProps) {
 	const onSubmitFeedback = async (message: string) => {
 		try {
 			await sendFeedback(message)
 
-			toast('¡Feedback enviado! 🎉')
+			toast('Feedback sent! 🎉')
 		} catch {
-			toast.error('Error enviando el feedback, vuelve a intentarlo')
+			toast.error('Error sending feedback, try again')
 
 			throw new Error('FAILED_TO_SEND')
 		}
 	}
 
 	return (
-		<header className='h-14 border-b p-2 px-4 grid grid-cols-[1fr_auto] gap-4 justify-between'>
+		<header
+			className={cn(
+				className,
+				'h-14 border-b p-2 px-4 grid grid-cols-[1fr_auto] gap-4 justify-between'
+			)}
+			{...props}
+		>
 			<div className='flex gap-2 items-center justify-start min-w-0'>
-				<Logo />
-				<span className='text-muted-foreground hidden md:block'>/</span>
-				{props.presentation ? (
+				<LogoLink />
+				{presentation ? (
 					<>
-						<Link
-							href={'/presentations'}
-							className='flex gap-2 items-center rounded-md md:hover:bg-accent/75 p-1 px-2'
-						>
-							<Image
-								src={props.user.avatarUrl}
-								alt={props.user.name}
-								width={20}
-								height={20}
-								className='rounded-full min-w-[20px] min-h-[20px]'
-								unoptimized
+						<div className='hidden sm:flex items-center min-w-0'>
+							<Link
+								href={'/presentations'}
+								className='flex gap-2 items-center p-1 px-2 hover:underline text-muted-foreground'
+							>
+								<Image
+									src={user.avatarUrl}
+									alt={user.name}
+									width={20}
+									height={20}
+									className='rounded-full min-w-[20px] min-h-[20px]'
+									unoptimized
+								/>
+								<p className='hidden text-nowrap md:block'>
+									{user.name.split(' ')[0]}&apos;s presentations
+								</p>
+							</Link>
+							<ArrowRight
+								className='text-muted-foreground'
+								size={16}
 							/>
-							<p className='text-muted-foreground hidden text-nowrap md:block'>
-								Presentaciones de {props.user.name.split(' ')[0]}
+							<p className='text-muted-foreground truncate text-nowrap px-2'>
+								{presentation.title}
 							</p>
-						</Link>
-						<span className='text-muted-foreground'>/</span>
-						<p className='text-muted-foreground truncate text-nowrap'>
-							{props.presentation.title}
-						</p>
-						<LinkBadge
-							href={`https://docs.google.com/presentation/d/${props.presentation.id}`}
+						</div>
+						<BadgeLink
+							href={`https://docs.google.com/presentation/d/${presentation.id}`}
 							target='_blank'
 						>
-							Abrir en Google Slides
-						</LinkBadge>
+							Open in Google Slides
+						</BadgeLink>
 					</>
 				) : (
 					<div className='flex gap-2 items-center rounded-md p-1 px-2'>
 						<Image
-							src={props.user.avatarUrl}
-							alt={props.user.name}
+							src={user.avatarUrl}
+							alt={user.name}
 							width={20}
 							height={20}
 							className='rounded-full min-w-[20px] min-h-[20px]'
 							unoptimized
 						/>
 						<p className='text-muted-foreground hidden text-nowrap md:block'>
-							Presentaciones de {props.user.name.split(' ')[0]}
+							{user.name.split(' ')[0]}&apos;s presentations
 						</p>
 					</div>
 				)}
 			</div>
 			<div className='flex gap-2 items-center'>
+				{children}
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button variant='outline'>Feedback</Button>
@@ -109,6 +125,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 					</PopoverContent>
 				</Popover>
 				<Link
+					className='hidden sm:block'
 					href={'https://github.com/Frandols/slaidge'}
 					target='_blank'
 					rel='noreferrer'
@@ -124,11 +141,7 @@ export default function PresentationsHeader(props: PresentationHeaderProps) {
 						GitHub
 					</Button>
 				</Link>
-				<UserMenu
-					name={props.user.name}
-					avatar={props.user.avatarUrl}
-					creditBalance={props.user.creditBalance.value}
-				/>
+				<UserDropdownMenu user={user} />
 			</div>
 		</header>
 	)

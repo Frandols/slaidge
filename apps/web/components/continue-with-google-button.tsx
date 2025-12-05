@@ -10,7 +10,7 @@ export default function ContinueWithGoogleButton() {
 
 	const params = new URLSearchParams({
 		client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-		redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL!}/auth/callback`,
+		redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL!}/api/tokens`,
 		response_type: 'code',
 		scope: [
 			'https://www.googleapis.com/auth/drive.file',
@@ -36,7 +36,7 @@ export default function ContinueWithGoogleButton() {
 					height={16}
 					unoptimized
 				/>
-				Continuar con Google
+				Continue with Google
 			</Button>
 		</Link>
 	)

@@ -6,7 +6,6 @@ import createInformativeElement, {
 import createInformativeSlide, {
 	createInformativeSlideParamsSchema,
 } from '@/schemas/template-requests/create-informative-slide'
-import generateQuickChartURL from '@/utils/generate-quickchart-url'
 import themeSchema from '../theme'
 
 export const createChartSlideParamsSchema =
@@ -39,7 +38,8 @@ export const createChartSlideParamsSchema =
 
 export default function createChartSlide(
 	params: z.infer<typeof createChartSlideParamsSchema>,
-	theme: z.infer<typeof themeSchema>
+	theme: z.infer<typeof themeSchema>,
+	presentationId: string
 ) {
 	const chartUrl = generateQuickChartURL({
 		type: params.chart.type,
@@ -72,7 +72,7 @@ export default function createChartSlide(
 	}
 
 	return [
-		...createInformativeSlide(params, theme),
+		...createInformativeSlide(params, theme, presentationId),
 		{
 			createImage: {
 				objectId: params.chart.id,
@@ -94,4 +94,54 @@ export default function createChartSlide(
 			)
 		}),
 	]
+}
+
+const baseUrl = 'https://quickchart.io/chart'
+const chartTypeMap = {
+	BAR: 'bar',
+	LINE: 'line',
+	PIE: 'pie',
+} as const
+
+function generateQuickChartURL({
+	type,
+	data,
+	title,
+	theme,
+}: {
+	type: 'BAR' | 'LINE' | 'PIE'
+	data: { label: string; value: number }[]
+	title: string
+	theme: z.infer<typeof themeSchema>
+}): string {
+	const labels = data.map((d) => d.label)
+	const values = data.map((d) => d.value)
+
+	const chartConfig = {
+		type: chartTypeMap[type],
+		data: {
+			labels,
+			datasets: [
+				{
+					label: title,
+					data: values,
+					backgroundColor: theme.colors.chart,
+				},
+			],
+		},
+		options: {
+			title: {
+				display: true,
+				text: title,
+				fontSize: 18,
+			},
+			legend: {
+				display: type !== 'BAR',
+			},
+		},
+	}
+
+	const encodedConfig = encodeURIComponent(JSON.stringify(chartConfig))
+
+	return `${baseUrl}?c=${encodedConfig}`
 }

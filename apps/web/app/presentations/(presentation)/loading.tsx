@@ -14,7 +14,7 @@ export default async function PresentationLoading() {
 						{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
 							<Skeleton
 								key={index}
-								className='h-full aspect-video relative hover:-translate-y-2 transition-transform'
+								className='h-full aspect-video rounded-xl relative hover:-translate-y-2 transition-transform'
 							/>
 						))}
 					</nav>

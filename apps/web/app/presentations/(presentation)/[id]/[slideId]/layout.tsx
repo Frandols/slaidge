@@ -1,4 +1,4 @@
-import FillerSkeleton from '@/components/filler-skeleton'
+import FullSizeSkeleton from '@/components/full-size-skeleton'
 
 export default function SlideLayout({
 	children,
@@ -6,8 +6,8 @@ export default function SlideLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div className='aspect-video max-w-[960px] md:min-w-[736px] w-full relative overflow-hidden rounded-2xl border'>
-			<FillerSkeleton />
+		<div className='aspect-video max-w-[960px] md:min-w-[736px] w-full relative overflow-hidden rounded-2xl'>
+			<FullSizeSkeleton />
 			{children}
 		</div>
 	)

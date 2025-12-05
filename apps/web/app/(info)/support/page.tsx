@@ -4,27 +4,22 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-	title: 'Soporte | Slaidge',
+	title: 'Support | Slaidge',
 	description:
-		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+		'The app that allows you to make your presentations with artificial intelligence and simplified tools.',
 }
 
 export default function SupportPage() {
 	return (
 		<>
-			<h1 className='text-3xl font-medium pb-6'>Soporte</h1>
+			<h1 className='text-3xl font-medium pb-6'>Support</h1>
 			<p className='leading-relaxed'>
-				1. Correo electrónico de soporte:
-				<br />
-				support@slaidge.com
-				<br />
-				<br />
-				2. Canal de Discord
+				1. Support email: <b className='underline'>support@slaidge.com</b>
 				<br />
 				<br />
 				<Link href={'https://discord.gg/QRXBubu2'}>
 					<Button>
-						Unirse al canal de Discord <ExternalLink />
+						Join Discord channel <ExternalLink />
 					</Button>
 				</Link>
 			</p>

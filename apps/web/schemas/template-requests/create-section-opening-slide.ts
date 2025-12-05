@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
+import hexToRgb from '@/adapters/hex-to-rgb'
 import themeSchema from '@/schemas/theme'
-import getBackgroundRequests from '@/utils/get-background-requests'
-import hexToRgb from '@/utils/hex-to-rgb'
+import getQRCodeRequests from '@/utils/get-qr-code-requests'
 
 export const createSectionOpeningSlideParamsSchema = z.object({
 	id: z.string().min(1).describe('ID of the slide'),
@@ -28,7 +28,8 @@ export const createSectionOpeningSlideParamsSchema = z.object({
 
 export default function createSectionOpeningSlide(
 	params: z.infer<typeof createSectionOpeningSlideParamsSchema>,
-	theme: z.infer<typeof themeSchema>
+	theme: z.infer<typeof themeSchema>,
+	presentationId: string
 ) {
 	const backgroundRequests = getBackgroundRequests(params.id, theme)
 
@@ -39,6 +40,7 @@ export default function createSectionOpeningSlide(
 				slideLayoutReference: { predefinedLayout: 'BLANK' },
 			},
 		},
+		...getQRCodeRequests(params.id, presentationId),
 		...backgroundRequests,
 		{
 			createShape: {
@@ -167,4 +169,26 @@ export default function createSectionOpeningSlide(
 				]
 			: []),
 	]
+}
+
+function getBackgroundRequests(id: string, theme: z.infer<typeof themeSchema>) {
+	const backgroundRequests = [
+		{
+			updatePageProperties: {
+				objectId: id,
+				pageProperties: {
+					pageBackgroundFill: {
+						solidFill: {
+							color: {
+								rgbColor: hexToRgb(theme.colors.background),
+							},
+						},
+					},
+				},
+				fields: 'pageBackgroundFill.solidFill.color',
+			},
+		},
+	]
+
+	return backgroundRequests
 }

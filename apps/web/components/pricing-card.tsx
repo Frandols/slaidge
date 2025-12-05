@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { Check } from 'lucide-react'
 
-import createPreference from '@/actions/create-preference'
+import redirectToCheckout from '@/actions/redirect-to-checkout'
 import { Button } from '@workspace/ui/components/button'
 import { useState } from 'react'
 import ConnectYourAccountDialog from './connect-your-account-dialog'
@@ -16,20 +16,21 @@ interface PricingCardProps {
 	description: string
 	suggestion: string
 	features: string[]
-	variant: 'primary' | 'secondary' | 'ghost'
+	variant: 'primary' | 'ghost'
 }
 
 export default function PricingCard(props: PricingCardProps) {
 	const [showDialog, setShowDialog] = useState<boolean>(false)
 
 	const onClick = async () => {
-		const result = await createPreference(props.offerId)
+		const { error } = await redirectToCheckout(props.offerId)
 
-		if (!result.error) return
+		if (!error) return
 
-		switch (result.error) {
+		switch (error) {
 			case 'UNAUTHENTICATED':
 				setShowDialog(true)
+
 				return
 			default:
 				return
@@ -44,12 +45,15 @@ export default function PricingCard(props: PricingCardProps) {
 					if (!open) setShowDialog(false)
 				}}
 			>
-				Necesitamos poder asignar los créditos a tu identidad.
+				We need to be able to assign credits to your identity.
 			</ConnectYourAccountDialog>
 			<div
 				className={clsx(
-					'border border-dashed flex flex-col justify-between gap-4 p-4 rounded-lg min-w-[365px] max-w-[500px] flex-1',
-					variantStyles[props.variant].border
+					'border flex flex-col justify-between gap-4 p-4 rounded-lg min-w-[365px] max-w-[500px] flex-1',
+					variantStyles[props.variant].border,
+					'group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl',
+					'bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
+					'transform-gpu dark:bg-background dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]'
 				)}
 			>
 				<div className='flex flex-col'>
@@ -62,9 +66,7 @@ export default function PricingCard(props: PricingCardProps) {
 					>
 						{props.title}
 					</p>
-					<p className='text-2xl font-semibold mb-1'>
-						{props.credits} créditos
-					</p>
+					<p className='text-2xl font-semibold mb-1'>{props.credits} credits</p>
 					<p className='text-3xl font-semibold mb-2'>{props.price}</p>
 					<p className='text-muted-foreground mb-4'>{props.description}</p>
 					<p className='text-sm p-1 bg-muted rounded text-nowrap'>
@@ -91,7 +93,7 @@ export default function PricingCard(props: PricingCardProps) {
 						variantStyles[props.variant].button.text
 					)}
 				>
-					Comprar créditos
+					Buy credits
 				</Button>
 			</div>
 		</>
@@ -110,19 +112,8 @@ const variantStyles = {
 			text: 'text-black',
 		},
 	},
-	secondary: {
-		border: 'border-chart-5',
-		title: {
-			background: 'bg-chart-5',
-			text: 'text-white',
-		},
-		button: {
-			background: 'bg-chart-5 hover:bg-chart-5/80',
-			text: 'text-white',
-		},
-	},
 	ghost: {
-		border: 'border-ghost',
+		border: 'border-ghost dark:[border:1px_solid_rgba(255,255,255,.1)]',
 		title: {
 			background: 'bg-accent',
 			text: 'text-accent-foreground',

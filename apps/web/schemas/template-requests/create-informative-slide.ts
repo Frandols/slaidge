@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
+import hexToRgb from '@/adapters/hex-to-rgb'
 import themeSchema from '@/schemas/theme'
-import hexToRgb from '@/utils/hex-to-rgb'
+import getQRCodeRequests from '@/utils/get-qr-code-requests'
 
 export const createInformativeSlideParamsSchema = z.object({
 	id: z.string().min(1).describe('ID of the new slide'),
@@ -25,9 +26,21 @@ export const createInformativeSlideParamsSchema = z.object({
 
 export default function createInformativeSlide(
 	params: z.infer<typeof createInformativeSlideParamsSchema>,
-	theme: z.infer<typeof themeSchema>
+	theme: z.infer<typeof themeSchema>,
+	presentationId: string
 ) {
-	const backgroundRequests = [
+	const presentationLink = `https://slaidge.com/presentations/${presentationId}`
+
+	return [
+		{
+			createSlide: {
+				objectId: params.id,
+				slideLayoutReference: {
+					predefinedLayout: 'BLANK',
+				},
+			},
+		},
+		...getQRCodeRequests(params.id, presentationId),
 		{
 			updatePageProperties: {
 				objectId: params.id,
@@ -43,18 +56,7 @@ export default function createInformativeSlide(
 				fields: 'pageBackgroundFill.solidFill.color',
 			},
 		},
-	]
-
-	return [
-		{
-			createSlide: {
-				objectId: params.id,
-				slideLayoutReference: {
-					predefinedLayout: 'BLANK',
-				},
-			},
-		},
-		...backgroundRequests,
+		,
 		{
 			createShape: {
 				objectId: params.title.id,

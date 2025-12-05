@@ -1,8 +1,15 @@
 'use server'
 
 import createSupabaseClient from '@/clients/factories/supabase'
-import { supabasePresentationSchema } from '@/schemas/presentation'
-import supabaseToItemPresentationAdapter from '@/schemas/presentation/adapters/supabase-to-item'
+import z from 'zod'
+
+const supabasePresentationSchema = z.object({
+	id: z.string().min(1),
+	title: z.string().min(1),
+	updated_at: z.string().refine((dateString) => {
+		return !isNaN(Date.parse(dateString))
+	}),
+})
 
 type PresentationsList = {
 	id: string
@@ -35,9 +42,12 @@ export default async function getUserPresentations(
 		if (!parsing.success) throw new Error('MALFORMED_PRESENTATION')
 
 		const unadaptedPresentation = parsing.data
-		const adaptedPresentation = supabaseToItemPresentationAdapter(
-			unadaptedPresentation
-		)
+
+		const adaptedPresentation = {
+			id: unadaptedPresentation.id,
+			title: unadaptedPresentation.title,
+			updatedAt: unadaptedPresentation.updated_at,
+		}
 
 		return adaptedPresentation
 	})

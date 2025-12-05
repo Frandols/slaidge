@@ -1,34 +1,48 @@
+import { Rocket, X } from 'lucide-react'
 import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 
-import CreatePresentationPrompt from '@/components/create-presentation-prompt'
-import LinkBadge from '@/components/link-badge'
-import Logo from '@/components/logo'
-import PresentationsList from '@/components/presentations-list'
+import HomePageHeader from '@/components/home-page-header'
+import LogoLink from '@/components/logo-link'
 import PricingCard from '@/components/pricing-card'
-import UserMenu from '@/components/user-menu'
+import Spotlight from '@/components/ui/spotlight'
 import requireAccessToken from '@/guards/require-access-token'
 import getUserProfile from '@/services/google/get-user-profile'
 import getUserCreditBalance from '@/services/supabase/get-user-credit-balance'
 import getUserPresentations from '@/services/supabase/get-user-presentations'
-import HeroVideoDialog from '@workspace/ui/components/magicui/hero-video-dialog'
 
-import { Badge } from '@workspace/ui/components/badge'
+import BadgeLink from '@/components/badge-link'
+import PresentationExampleDialogGallery from '@/components/presentation-example-dialog-gallery'
+
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from '@workspace/ui/components/tooltip'
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@workspace/ui/components/accordion'
+import { Button } from '@workspace/ui/components/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from '@workspace/ui/components/dialog'
+import BlurFade from '@workspace/ui/components/magicui/blur-fade'
+import HeroVideoDialog from '@workspace/ui/components/magicui/hero-video-dialog'
+import Highlighter from '@workspace/ui/components/magicui/highlighter'
+import Marquee from '@workspace/ui/components/magicui/marquee'
+import TextAnimate from '@workspace/ui/components/magicui/text-animate'
 
 export const metadata: Metadata = {
-	title: 'Construye tu presentación con IA, en minutos | Slaidge',
+	title: "Don't start from scratch, just refine it | Slaidge",
 	description:
-		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+		'Start every presentation with a smart data framework, not an empty slide.',
 	openGraph: {
-		title: 'Construye tu presentación con IA, en minutos | Slaidge',
+		title: "Don't start from scratch, just refine it | Slaidge",
 		description:
-			'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+			'Start every presentation with a smart data framework, not an empty slide.',
 		url: 'https://slaidge.com/',
 		images: [{ url: '/share-main.webp' }],
 	},
@@ -46,8 +60,10 @@ async function checkUserLogged() {
 
 		const userProfile = await getUserProfile(accessToken)
 
-		const presentationsList = await getUserPresentations(userProfile.id)
-		const creditBalance = await getUserCreditBalance(userProfile.id)
+		const [presentationsList, creditBalance] = await Promise.all([
+			getUserPresentations(userProfile.id),
+			getUserCreditBalance(userProfile.id),
+		])
 
 		return { ...userProfile, presentationsList, creditBalance }
 	} catch {
@@ -59,97 +75,102 @@ export default async function HomePage() {
 	const userProfile = await checkUserLogged()
 
 	return (
-		<div className='bg-background min-h-dvh'>
-			<header className='max-w-7xl mx-auto py-5 px-4 md:px-8 flex gap-8 justify-between border-b border-dashed border-x'>
-				<div className='flex gap-3 items-center'>
-					<Logo />
-					<h2 className='font-medium'>Slaidge</h2>
-					<Tooltip>
-						<TooltipContent side='bottom'>
-							Pueden ocurrir errores durante el uso de la aplicación, comunicate
-							con soporte de ser necesario
-						</TooltipContent>
-						<TooltipTrigger>
-							<Badge>Beta</Badge>
-						</TooltipTrigger>
-					</Tooltip>
-				</div>
-				<ul className='flex gap-6 items-center'>
-					<li className='hover:underline'>
-						<Link href='#pricing'>Precios</Link>
-					</li>
-					{userProfile ? (
-						<li className='grid place-content-center'>
-							<UserMenu
-								name={userProfile.name}
-								avatar={userProfile.avatarUrl}
-								creditBalance={userProfile.creditBalance}
-							/>
-						</li>
-					) : (
-						<li>
-							<LinkBadge href={'/log-in'}>Ingresar</LinkBadge>
-						</li>
-					)}
-				</ul>
-			</header>
-			<main className='max-w-7xl mx-auto py-8 px-4 md:px-8 flex flex-col items-center border-x border-b pb-24 border-dashed'>
+		<div className='bg-background min-h-dvh pt-20'>
+			<HomePageHeader userProfile={userProfile} />
+			<main
+				id='main'
+				className='max-w-7xl relative mx-auto py-8 px-4 md:px-8 flex flex-col items-center pb-18'
+			>
+				<Spotlight className='top-25 -left-25 rotate-25 sm:top-5 sm:-left-15 md:-top-15 md:left-5 md:rotate-15 lg:top-15 lg:left-50 lg:rotate-15' />
 				<div className='max-w-3xl mx-auto flex flex-col gap-6 items-center mb-12'>
 					<div
 						className={
 							'group rounded-full border border-accent-foreground/12.5 relative bg-accent w-min truncate py-1 px-4'
 						}
 					>
-						<p className='text-xs md:text-[15px]'>
-							Se guardarán en Google Slides ✨
-						</p>
+						<p className='text-xs md:text-[15px]'>Saved in Google Slides ✨</p>
 					</div>
-					<h1 className='text-center font-extrabold text-4xl lg:text-6xl'>
-						Construye tu presentación con IA,{' '}
-						<span className='relative whitespace-nowrap'>
-							<div className='absolute bg-primary h-[75%] -left-2 top-2 -bottom-1 -right-2 md:-left-3 md:top-2.125 lg:top-3 md:-bottom-0 md:-right-3 -rotate-1'></div>
-							<span className='text-black relative'>en minutos</span>
-						</span>
-					</h1>
+					<span className='text-center font-extrabold text-4xl lg:text-6xl'>
+						<TextAnimate
+							animation='blurInUp'
+							by='word'
+							once
+						>
+							Don&apos;t start from scratch,
+						</TextAnimate>
+						<BlurFade
+							delay={1}
+							duration={1}
+						>
+							<span className='relative whitespace-nowrap'>
+								<div className='absolute bg-primary h-[75%] -left-2 top-2 -bottom-1 -right-2 md:-left-3 md:top-2.125 lg:top-3 md:-bottom-0 md:-right-3 -rotate-1'></div>
+								<span className='text-black relative'>just refine it</span>
+							</span>
+						</BlurFade>
+					</span>
 					<p className='text-center text-lg text-muted-foreground'>
-						La app que te permite hacer tus presentaciones con{' '}
+						Start every presentation with a{' '}
 						<span className='text-accent-foreground'>
-							inteligencia artificial
+							smart data framework,
 						</span>{' '}
-						en tiempos récord
+						not an empty slide.
 					</p>
 				</div>
-				<div className='max-w-3xl w-full h-[125px] md:h-[175px]'>
-					<CreatePresentationPrompt
-						creditBalance={userProfile?.creditBalance}
-					/>
-				</div>
+				<Link href={'/log-in'}>
+					<Button>Try It Now</Button>
+				</Link>
 			</main>
-			{userProfile && userProfile.presentationsList.length > 0 ? (
-				<div className='w-full'>
-					<div className='max-w-7xl mx-auto px-4 md:px-8 border-x border-b border-dashed py-8'>
-						<div className='w-full border border-dashed rounded-lg'>
-							<div className='flex gap-2 items-center flex-wrap border-b border-dashed p-4'>
-								<h2 className='text-xl md:text-2xl font-bold'>
-									Presentaciones de {userProfile.name.split(' ')[0]}
-								</h2>
-								<LinkBadge href='/presentations'>
-									Ir a mis presentaciones
-								</LinkBadge>
-							</div>
-							<PresentationsList value={userProfile.presentationsList} />
-						</div>
-					</div>
-				</div>
-			) : null}
-			<section className='max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
+			<div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
+				<Marquee
+					pauseOnHover
+					className='[--duration:20s]'
+				>
+					{[
+						{ id: '1', slideCount: 5 },
+						{ id: '2', slideCount: 3 },
+						{ id: '3', slideCount: 4 },
+						{ id: '4', slideCount: 5 },
+					].map((presentationExample) => (
+						<Dialog key={presentationExample.id}>
+							<DialogTrigger asChild>
+								<img
+									className='h-32 aspect-video rounded-xl'
+									src={`/presentation_examples/${presentationExample.id}/1.webp`}
+								/>
+							</DialogTrigger>
+							<DialogContent className='grid place-content-center bg-transparent p-0 border-0'>
+								<DialogTitle className='hidden'>Hello!</DialogTitle>
+								<div className='relative w-full md:w-3xl aspect-video z-10'>
+									<DialogClose asChild>
+										<button className='absolute -top-16 right-0 rounded-full bg-neutral-900/50 p-2 text-xl text-white ring-1 backdrop-blur-md dark:bg-neutral-100/50 dark:text-black'>
+											<X />
+										</button>
+									</DialogClose>
+									<PresentationExampleDialogGallery {...presentationExample} />
+								</div>
+							</DialogContent>
+						</Dialog>
+					))}
+				</Marquee>
+				<div className='pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background'></div>
+				<div className='pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background'></div>
+			</div>
+			<div
+				id='product'
+				className='max-w-5xl mx-auto px-4 md:px-8 py-8 mt-24 flex flex-col items-center'
+			>
 				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
-					Demo
+					How it works
 				</h2>
 				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
-					Mirá lo que podés hacer
+					Count on an assistant that does the heavy lifting for you
 				</p>
-				<div className='relative'>
+				<p className='text-muted-foreground text-center mb-16'>
+					Slaidge works as a bridge between you and Google Slides. Communicate
+					with an AI agent that does the laborious edits without stopping you
+					from making manual changes.
+				</p>
+				<div className='w-full max-w-5xl aspect-video'>
 					<HeroVideoDialog
 						className='block dark:hidden'
 						animationStyle='from-center'
@@ -165,13 +186,18 @@ export default async function HomePage() {
 						thumbnailAlt='Demo Video'
 					/>
 				</div>
-			</section>
-			<section className='max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center border-x border-b border-dashed'>
+			</div>
+			<BlurFade
+				inView
+				direction='up'
+				offset={20}
+				className='max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center'
+			>
 				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
-					Precios
+					Pricing
 				</h2>
 				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
-					Pagá solo por lo que usas
+					Not another subscription, pay only for what you use
 				</p>
 				<div
 					id='pricing'
@@ -179,68 +205,182 @@ export default async function HomePage() {
 				>
 					<PricingCard
 						offerId='credits-25'
-						title='Corto plazo'
+						title='Short term'
 						credits={25}
-						price='$5.99'
-						description='Ideal si necesitas terminar algo ya'
-						suggestion='Prueba el producto con una inversion minima'
+						price='$2.99'
+						description='Ideal if you need to finish something now'
+						suggestion='Try the product with a minimum investment'
 						features={[
-							'Edita tu presentación con IA',
-							'Tendrás tu presentación en tu Google Slides siempre',
-							'Los créditos nunca expiran',
-							'Soporte via Discord o email',
-							'Perfecto para probar el producto',
+							'Edit your presentation with AI',
+							'You will always have your presentation in Google Slides',
+							'Credits never expire',
+							'Support via Discord or email',
+							'Perfect for testing the product',
 						]}
 						variant='ghost'
 					/>
 					<PricingCard
 						offerId='credits-50'
-						title='Mas popular 🔥'
+						title='Most popular 🔥'
 						credits={50}
-						price='$9.99'
-						description='Si te queda buen trabajo por delante'
-						suggestion='El mejor valor para la mayoria de usuarios'
+						price='$4.99'
+						description='If you have good work ahead'
+						suggestion='The best value for most users'
 						features={[
-							'Edita tu presentación con IA',
-							'Tendrás tu presentación en tu Google Slides siempre',
-							'Los créditos nunca expiran',
-							'Soporte via Discord o email',
-							'Mejor valor para usuarios regulares',
+							'Edit your presentation with AI',
+							'You will always have your presentation in Google Slides',
+							'Credits never expire',
+							'Support via Discord or email',
+							'Best value for regular users',
 						]}
 						variant='primary'
 					/>
 					<PricingCard
 						offerId='credits-150'
-						title='Alto volumen'
+						title='High volume'
 						credits={150}
-						price='$24.99'
-						description='Para trabajos muy largos o equipos'
-						suggestion='Para necesidades de alto volumen'
+						price='$14.99'
+						description='For very long jobs or teams'
+						suggestion='For high volume needs'
 						features={[
-							'Edita tu presentación con IA',
-							'Tendrás tu presentación en tu Google Slides siempre',
-							'Los créditos nunca expiran',
-							'Soporte via Discord o email',
-							'Ideal para necesidades de alto volumen',
-							'Soporte prioritario',
+							'Edit your presentation with AI',
+							'You will always have your presentation in Google Slides',
+							'Credits never expire',
+							'Support via Discord or email',
+							'Ideal for high volume needs',
+							'Priority support',
 						]}
 						variant='ghost'
 					/>
 				</div>
-			</section>
+			</BlurFade>
+			<BlurFade
+				id='faq'
+				inView
+				direction='up'
+				offset={20}
+				className='max-w-5xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center'
+				layoutId='faq'
+			>
+				<h2 className='font-semibold text-xs md:text-sm text-black truncate px-2 mb-2 bg-primary rounded'>
+					FAQ
+				</h2>
+				<p className='text-2xl md:text-3xl text-accent-foreground font-bold mb-8 text-center'>
+					Frequently Asked Questions
+				</p>
+				<p className='text-muted-foreground text-center mb-8'>
+					Find answers to common questions about our service
+				</p>
+				<Accordion
+					type='single'
+					collapsible
+					className='w-full mb-8'
+				>
+					<AccordionItem value='item-0'>
+						<AccordionTrigger>Who is Slaidge for?</AccordionTrigger>
+						<AccordionContent className='flex flex-col gap-4 text-balance'>
+							<p>
+								Slaidge is for people that needs a starter template for their
+								presentations fast and easy. We address this by using AI to
+								generate a presentation based on the information you provide.
+							</p>
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value='item-1'>
+						<AccordionTrigger>Is the application free?</AccordionTrigger>
+						<AccordionContent className='flex flex-col gap-4 text-balance'>
+							<p>
+								Slaidge is not free, is a pay-per-use service. You can buy
+								credits to use the service.
+							</p>
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value='item-2'>
+						<AccordionTrigger>
+							What will happen to my presentations?
+						</AccordionTrigger>
+						<AccordionContent className='flex flex-col gap-4 text-balance'>
+							<p>
+								Your presentations will always be available to you in Google
+								Slides.
+							</p>
+							<p>
+								Our goal is simply to help you speed up the heavy lifting of
+								loading and formatting information.
+							</p>
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value='item-3'>
+						<AccordionTrigger>
+							How long do the credits I buy last?
+						</AccordionTrigger>
+						<AccordionContent className='flex flex-col gap-4 text-balance'>
+							<p>Forever.</p>
+							<p>
+								The credits you purchase will always be available in your
+								account for you to use.
+							</p>
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value='item-4'>
+						<AccordionTrigger>
+							Can I have my presentations in PowerPoint?
+						</AccordionTrigger>
+						<AccordionContent className='flex flex-col gap-4 text-balance'>
+							<p>Of course!</p>
+							<p>
+								From Google Slides you can export your presentation and then
+								import it into PowerPoint if you wish.
+							</p>
+						</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+				<p className='text-muted-foreground mb-2'>Still have questions?</p>
+				<BadgeLink href={'/support'}>Contact support</BadgeLink>
+			</BlurFade>
+			<BlurFade
+				inView
+				direction='up'
+				offset={20}
+				className='max-w-3xl mx-auto flex flex-col gap-6 items-center mb-12 px-4 md:px-8 py-24'
+			>
+				<div className='text-center text-2xl'>
+					<p className='leading-relaxed relative'>
+						Avoid the{' '}
+						<Highlighter
+							action='underline'
+							color='var(--primary)'
+						>
+							heavy lifting
+						</Highlighter>{' '}
+						and focus on{' '}
+						<Highlighter
+							action='highlight'
+							color='var(--primary)'
+						>
+							customization
+						</Highlighter>{' '}
+						.
+					</p>
+				</div>
+				<Link href={'/log-in'}>
+					<Button>
+						Start now <Rocket />
+					</Button>
+				</Link>
+			</BlurFade>
 			<footer className='w-full'>
-				<div className='max-w-7xl mx-auto py-8 flex flex-wrap justify-between border-x border-b border-dashed px-4 md:px-8 gap-8'>
+				<div className='max-w-7xl mx-auto py-8 flex flex-wrap justify-between px-4 md:px-8 gap-8'>
 					<div className='flex flex-col flex-grow'>
 						<div className='flex gap-2 items-center'>
-							<Logo size={30} />
+							<LogoLink size={30} />
 							<h2 className='font-medium'>Slaidge</h2>
 						</div>
 						<p className='text-muted-foreground mt-2'>
-							Construye tu presentación con IA, en minutos
+							Don't start from scratch, just refine it
 						</p>
 						<p className='text-muted-foreground'>
-							Copyright @{new Date().getFullYear()} - Todos los derechos
-							reservados
+							Copyright @{new Date().getFullYear()} - All rights reserved
 						</p>
 					</div>
 					<div className='flex flex-col flex-grow'>
@@ -261,7 +401,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='#pricing'
 								>
-									Precios
+									Pricing
 								</Link>
 							</li>
 							<li>
@@ -269,7 +409,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/support'
 								>
-									Soporte
+									Support
 								</Link>
 							</li>
 						</ul>
@@ -284,7 +424,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/terms-and-conditions'
 								>
-									Términos y condiciones
+									Terms and Conditions
 								</Link>
 							</li>
 							<li>
@@ -292,7 +432,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/privacy-policy'
 								>
-									Política de privacidad
+									Privacy Policy
 								</Link>
 							</li>
 							<li>
@@ -300,7 +440,7 @@ export default async function HomePage() {
 									className='hover:underline text-muted-foreground'
 									href='/licenses'
 								>
-									Licencias
+									Licenses
 								</Link>
 							</li>
 						</ul>

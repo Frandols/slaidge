@@ -13,7 +13,7 @@ import offerIdSchema, {
 } from '@/schemas/offer-id'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import createPreference from '@/actions/create-preference'
+import redirectToCheckout from '@/actions/redirect-to-checkout'
 import { Button } from '@workspace/ui/components/button'
 import {
 	Dialog,
@@ -53,7 +53,7 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 	})
 
 	const onSubmit = (offer: z.infer<typeof offerSchema>) => {
-		createPreference(offer.id)
+		redirectToCheckout(offer.id)
 	}
 
 	const onCheckOffer = (offerId: z.infer<typeof offerSchema>['id']) => {
@@ -74,53 +74,53 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 				<DialogHeader>
 					<DialogTitle>
 						{props.currentCreditBalance > 0
-							? 'Comprá créditos'
-							: 'Te quedaste sin créditos'}
+							? 'Buy credits'
+							: 'You ran out of credits'}
 					</DialogTitle>
 					<DialogDescription>
 						{props.currentCreditBalance > 0
-							? 'Adelantate y no te quedes sin poder editar tus presentaciones'
-							: 'Adquirilos para poder seguir editando tus presentaciones'}
+							? "Get ahead and don't run out of edits for your presentations"
+							: 'Purchase them to continue editing your presentations'}
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form className='grid gap-2 grid-cols-[repeat(3,_minmax(125px,_1fr))]'>
 						<OfferRadioInput
 							offer={{ id: CREDITS_50 }}
-							label='50 créditos'
-							description='Si te queda un buen trabajo por delante'
+							label='50 credits'
+							description='If you have good work ahead'
 							trending
 							onCheck={onCheckOffer}
 						/>
 						<OfferRadioInput
 							offer={{ id: CREDITS_25 }}
-							label='25 créditos'
-							description='Ideal si necesitas terminar algo ya'
+							label='25 credits'
+							description='Ideal if you need to finish something now'
 							onCheck={onCheckOffer}
 						/>
 						<OfferRadioInput
 							offer={{ id: CREDITS_150 }}
-							label='150 créditos'
-							description='Para trabajos muy largos o equipos'
+							label='150 credits'
+							description='For very long jobs or teams'
 							onCheck={onCheckOffer}
 						/>
 					</form>
 				</Form>
-				<div className='border border-dashed p-2 rounded-md flex flex-col gap-1'>
+				<div className='flex flex-col gap-1'>
 					<p className='text-sm text-muted-foreground'>
-						Tu balance despues de la carga será:{' '}
+						Your balance after the purchase will be:{' '}
 					</p>
-					<p className='text-muted-foreground font-mono bg-accent p-1 rounded'>
+					<p className='text-muted-foreground font-mono bg-accent p-1 px-2 rounded'>
 						{props.currentCreditBalance} + {selectedAmount} ={' '}
 						{(props.currentCreditBalance + selectedAmount).toFixed(2)}
 					</p>
 				</div>
 				<DialogFooter>
 					<DialogClose asChild>
-						<Button variant='outline'>Cancelar</Button>
+						<Button variant='outline'>Cancel</Button>
 					</DialogClose>
 					<Button onClick={form.handleSubmit(onSubmit)}>
-						Comprar créditos <ArrowRight />
+						Buy credits <ArrowRight />
 					</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -172,7 +172,7 @@ function OfferRadioInput<T extends z.infer<typeof offerSchema>>({
 						{trending ? (
 							<div className='bg-green-200 border-green-700 rounded px-1 w-min mt-2'>
 								<p className='text-green-700 text-[.75rem] truncate font-medium'>
-									En tendencia{' '}
+									Trending{' '}
 									<TrendingUp
 										size={12}
 										className='inline'

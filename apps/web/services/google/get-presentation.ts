@@ -1,6 +1,5 @@
 import createSupabaseClient from '@/clients/factories/supabase'
-import { APIPresentationSchema } from '@/schemas/presentation'
-import APIToAppPresentationAdapter from '@/schemas/presentation/adapters/api-to-app'
+import googlePresentationSchema from '@/schemas/google/presentation'
 
 interface Presentation {
 	id: string
@@ -14,6 +13,13 @@ interface Presentation {
 	}[]
 }
 
+/**
+ * Get a Google Slides presentation and its last edition time from Supabase.
+ *
+ * @param id The ID of the presentation.
+ * @param accessToken The OAuth2 access token.
+ * @returns The presentation and its last edition time.
+ */
 export default async function getPresentation(
 	id: string,
 	accessToken: string
@@ -29,17 +35,28 @@ export default async function getPresentation(
 				}
 			)
 
+			if (response.status !== 200)
+				throw new Error('FAILED_TO_FETCH_GOOGLE_PRESENTATION')
+
 			const json = await response.json()
 
-			const presentationParsing = APIPresentationSchema.safeParse(json)
+			const presentationParsing = googlePresentationSchema.safeParse(json)
 
 			if (!presentationParsing.success)
 				throw new Error('MALFORMED_PRESENTATION')
 
 			const unadaptedPresentation = presentationParsing.data
-			const adaptedPresentation: Presentation = APIToAppPresentationAdapter(
-				unadaptedPresentation
-			)
+			const adaptedPresentation: Presentation = {
+				id: unadaptedPresentation.presentationId,
+				title: unadaptedPresentation.title,
+				pageSize: {
+					width: unadaptedPresentation.pageSize.width.magnitude,
+					height: unadaptedPresentation.pageSize.height.magnitude,
+				},
+				slides: unadaptedPresentation.slides.map((slide) => ({
+					id: slide.objectId,
+				})),
+			}
 
 			return adaptedPresentation
 		})(),

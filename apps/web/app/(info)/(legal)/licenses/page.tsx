@@ -1,45 +1,43 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Licencias | Slaidge',
+	title: 'Licenses | Slaidge',
 	description:
-		'La app que te permite hacer tus presentaciones con inteligencia artificial y herramientas simplificadas.',
+		'The app that allows you to make your presentations with artificial intelligence and simplified tools.',
 }
 
 export default function LicensesPage() {
 	return (
 		<>
-			<h1 className='text-3xl font-medium pb-6'>Licencias</h1>
+			<h1 className='text-3xl font-medium pb-6'>Licenses</h1>
 			<p className='leading-relaxed'>
-				1. Otorgamiento de Licencia
-				<br /> Slaidge te otorga una licencia no exclusiva, intransferible y no
-				sublicenciable para:
+				1. License Grant
+				<br /> Slaidge grants you a non-exclusive, non-transferable, and
+				non-sublicensable license to:
 				<br />
-				- Usar la App para crear y editar presentaciones personales o
-				comerciales.
+				- Use the App to create and edit personal or commercial presentations.
 				<br />
-				- Usar las funciones de IA para asistir en la generación o modificación
-				de contenido.
+				- Use AI features to assist in content generation or modification.
 				<br />
-				<br /> 2. Restricciones
-				<br /> No podés:
-				<br />- Redistribuir la App como producto independiente.
-				<br />- Quitar avisos de derechos de autor o marca.
-				<br />- Usar la App en violación de leyes o derechos de terceros.
-				<br />- Sub-licenciar, alquilar o transferir tu acceso.
+				<br /> 2. Restrictions
+				<br /> You may not:
+				<br />- Redistribute the App as a standalone product.
+				<br />- Remove copyright or trademark notices.
+				<br />- Use the App in violation of laws or third-party rights.
+				<br />- Sublicense, rent, or transfer your access.
 				<br />
-				<br /> 3. Propiedad Intelectual Todos los derechos sobre el software,
-				marca y diseño pertenecen a los creadores de Slaidge. Esta licencia no
-				transfiere propiedad.
+				<br /> 3. Intellectual Property All rights to the software, brand, and
+				design belong to the creators of Slaidge. This license does not transfer
+				ownership.
 				<br />
-				<br /> 4. Garantías y Responsabilidad
-				<br /> Slaidge se ofrece "tal cual", sin garantías de funcionamiento. No
-				nos responsabilizamos por daños derivados del uso del software.
+				<br /> 4. Warranties and Liability
+				<br /> Slaidge is provided "as is", without warranties of performance.
+				We are not responsible for damages arising from the use of the software.
 				<br />
-				<br /> 5. Ley Aplicable Este acuerdo se rige por las leyes de la
-				República Argentina.
+				<br /> 5. Applicable Law This agreement is governed by the laws of the
+				Argentine Republic.
 				<br />
-				<br /> Última actualización: 22 de julio de 2025.
+				<br /> Last updated: July 22, 2025.
 			</p>
 		</>
 	)

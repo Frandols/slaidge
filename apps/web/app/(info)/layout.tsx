@@ -13,7 +13,7 @@ export default function LegalLayout({
 				<Link href='/'>
 					<Button variant='outline'>
 						<ArrowLeft />
-						Volver
+						Go back
 					</Button>
 				</Link>
 			</header>

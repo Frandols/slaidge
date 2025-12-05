@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
+import hexToRgb from '@/adapters/hex-to-rgb'
 import themeSchema from '@/schemas/theme'
-import hexToRgb from '@/utils/hex-to-rgb'
 
 const areasFontSizes: Record<number, number> = {
 	22500: 12,

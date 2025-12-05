@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import Link from 'next/link'
 
 import useSlideImageSrc from '@/hooks/use-slide-image-src'
@@ -19,11 +19,6 @@ export default function PresentationItem(props: PresentationItemProps) {
 		<Link
 			href={`/presentations/${props.id}`}
 			className='group min-w-0'
-			onNavigate={(e) => {
-				e.preventDefault()
-
-				window.location.href = `/presentations/${props.id}`
-			}}
 		>
 			<div className='h-full flex flex-col gap-2'>
 				<div className='aspect-video rounded-lg w-full relative'>
@@ -36,10 +31,10 @@ export default function PresentationItem(props: PresentationItemProps) {
 				<div className='flex flex-col gap-2 p-2'>
 					<p className='font-medium truncate'>{props.title}</p>
 					<p className='text-sm text-muted-foreground'>
-						Editado{' '}
+						Edited{' '}
 						{formatDistanceToNow(new Date(props.updatedAt), {
 							addSuffix: true,
-							locale: es,
+							locale: enUS,
 						})}
 					</p>
 				</div>
