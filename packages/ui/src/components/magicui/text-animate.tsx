@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/utils.js'
 import { AnimatePresence, motion, MotionProps, Variants } from 'motion/react'
-import { ElementType, memo } from 'react'
+import { ElementType } from 'react'
 
 type AnimationType = 'text' | 'word' | 'character' | 'line'
 type AnimationVariant =
@@ -301,7 +301,7 @@ const defaultItemAnimationVariants: Record<
 	},
 }
 
-const TextAnimateBase = ({
+export function TextAnimate({
 	children,
 	delay = 0,
 	duration = 0.3,
@@ -315,8 +315,8 @@ const TextAnimateBase = ({
 	animation = 'fadeIn',
 	accessible = true,
 	...props
-}: TextAnimateProps) => {
-	const MotionComponent = motion.create(Component)
+}: TextAnimateProps) {
+	const MotionComponent = motion.create(Component as any)
 
 	let segments: string[] = []
 	switch (by) {
@@ -415,6 +415,3 @@ const TextAnimateBase = ({
 }
 
 // Export the memoized version
-const TextAnimate = memo(TextAnimateBase)
-
-export default TextAnimate

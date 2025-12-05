@@ -33,7 +33,7 @@ import BlurFade from '@workspace/ui/components/magicui/blur-fade'
 import HeroVideoDialog from '@workspace/ui/components/magicui/hero-video-dialog'
 import Highlighter from '@workspace/ui/components/magicui/highlighter'
 import Marquee from '@workspace/ui/components/magicui/marquee'
-import TextAnimate from '@workspace/ui/components/magicui/text-animate'
+import { TextAnimate } from '@workspace/ui/components/magicui/text-animate'
 
 export const metadata: Metadata = {
 	title: "Don't start from scratch, just refine it | Slaidge",
