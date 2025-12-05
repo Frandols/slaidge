@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@workspace/ui/lib/utils.js'
+import { cn } from '@workspace/ui/lib/utils'
 import { AnimatePresence, motion, MotionProps, Variants } from 'motion/react'
 import { ElementType } from 'react'
 
