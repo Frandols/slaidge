@@ -75,7 +75,7 @@ export default async function HomePage() {
 	const userProfile = await checkUserLogged()
 
 	return (
-		<div className='bg-background min-h-dvh pt-20'>
+		<div className='bg-background min-h-dvh overflow-x-hidden pt-20'>
 			<HomePageHeader userProfile={userProfile} />
 			<main
 				id='main'
