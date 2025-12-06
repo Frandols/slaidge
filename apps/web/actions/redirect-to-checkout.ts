@@ -11,9 +11,9 @@ import getUserProfile from '@/services/google/get-user-profile'
 import z from 'zod'
 
 const offersProductIds: Record<z.infer<typeof offerIdSchema>, string> = {
-	'credits-25': 'f70ce208-6730-4489-accf-d0557eb1bfe0',
-	'credits-50': '32415726-29ff-484f-b8eb-667d84d63d22',
-	'credits-150': 'cbb99a1b-68a4-4920-9898-da99097ebf4d',
+	'credits-25': '0bb00df5-ec83-44e0-bb53-4998721a2fb8',
+	'credits-50': '3dde5497-92aa-4390-99cd-9d4730da9f83',
+	'credits-150': '90be1713-b218-4c33-9a04-259a05915648',
 }
 
 /**
