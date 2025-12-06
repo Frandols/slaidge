@@ -1,17 +1,14 @@
 'use client'
 
-import { ArrowRight, TrendingUp } from 'lucide-react'
-import { useState } from 'react'
-import { useForm, useFormContext } from 'react-hook-form'
-import { z } from 'zod'
-
 import offersData from '@/dictionaries/offers-data'
 import offerIdSchema, {
 	CREDITS_150,
 	CREDITS_25,
 	CREDITS_50,
 } from '@/schemas/offer-id'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowRight, TrendingUp } from 'lucide-react'
+import { useState } from 'react'
+import { z } from 'zod'
 
 import redirectToCheckout from '@/actions/redirect-to-checkout'
 import { Button } from '@workspace/ui/components/button'
@@ -24,42 +21,21 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@workspace/ui/components/dialog'
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-} from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
-
-const offerSchema = z.object({
-	id: offerIdSchema,
-})
-
-type OfferFormValues = z.infer<typeof offerSchema>
 
 interface BuyCreditsDialogProps extends React.ComponentProps<typeof Dialog> {
 	currentCreditBalance: number
 }
 
 export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
-	const [selectedAmount, setSelectedAmount] = useState<number>(50)
+	const [selectedOfferId, setSelectedOfferId] =
+		useState<z.infer<typeof offerIdSchema>>(CREDITS_50)
 
-	const form = useForm<OfferFormValues>({
-		resolver: zodResolver(offerSchema),
-		defaultValues: {
-			id: CREDITS_50,
-		},
-	})
+	const selectedAmount =
+		offersData[selectedOfferId as keyof typeof offersData].amount
 
-	const onSubmit = (offer: z.infer<typeof offerSchema>) => {
-		redirectToCheckout(offer.id)
-	}
-
-	const onCheckOffer = (offerId: z.infer<typeof offerSchema>['id']) => {
-		setSelectedAmount(offersData[offerId].amount)
+	const onSubmit = () => {
+		redirectToCheckout(selectedOfferId)
 	}
 
 	return (
@@ -68,7 +44,7 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 			onOpenChange={(open) => {
 				props.onOpenChange?.(open)
 
-				if (!open) form.reset()
+				if (!open) setSelectedOfferId(CREDITS_50)
 			}}
 		>
 			{props.children}
@@ -85,29 +61,30 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 							: 'Purchase them to continue editing your presentations'}
 					</DialogDescription>
 				</DialogHeader>
-				<Form {...(form as any)}>
-					<form className='grid gap-2 grid-cols-[repeat(3,_minmax(125px,_1fr))]'>
-						<OfferRadioInput
-							offer={{ id: CREDITS_50 }}
-							label='50 credits'
-							description='If you have good work ahead'
-							trending
-							onCheck={onCheckOffer}
-						/>
-						<OfferRadioInput
-							offer={{ id: CREDITS_25 }}
-							label='25 credits'
-							description='Ideal if you need to finish something now'
-							onCheck={onCheckOffer}
-						/>
-						<OfferRadioInput
-							offer={{ id: CREDITS_150 }}
-							label='150 credits'
-							description='For very long jobs or teams'
-							onCheck={onCheckOffer}
-						/>
-					</form>
-				</Form>
+				<div className='grid gap-2 grid-cols-[repeat(3,_minmax(125px,_1fr))]'>
+					<OfferRadioInput
+						offer={{ id: CREDITS_50 }}
+						label='50 credits'
+						description='If you have good work ahead'
+						trending
+						selectedId={selectedOfferId}
+						onSelect={setSelectedOfferId}
+					/>
+					<OfferRadioInput
+						offer={{ id: CREDITS_25 }}
+						label='25 credits'
+						description='Ideal if you need to finish something now'
+						selectedId={selectedOfferId}
+						onSelect={setSelectedOfferId}
+					/>
+					<OfferRadioInput
+						offer={{ id: CREDITS_150 }}
+						label='150 credits'
+						description='For very long jobs or teams'
+						selectedId={selectedOfferId}
+						onSelect={setSelectedOfferId}
+					/>
+				</div>
 				<div className='flex flex-col gap-1'>
 					<p className='text-sm text-muted-foreground'>
 						Your balance after the purchase will be:{' '}
@@ -121,7 +98,7 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 					<DialogClose asChild>
 						<Button variant='outline'>Cancel</Button>
 					</DialogClose>
-					<Button onClick={form.handleSubmit(onSubmit)}>
+					<Button onClick={onSubmit}>
 						Buy credits <ArrowRight />
 					</Button>
 				</DialogFooter>
@@ -130,61 +107,51 @@ export default function BuyCreditsDialog(props: BuyCreditsDialogProps) {
 	)
 }
 
-interface OfferRadioInputProps<T extends z.infer<typeof offerSchema>> {
-	offer: T
+interface OfferRadioInputProps {
+	offer: { id: z.infer<typeof offerIdSchema> }
 	label: string
 	description: string
 	trending?: boolean
-	onCheck: (checkedId: T['id']) => void
+	selectedId: z.infer<typeof offerIdSchema>
+	onSelect: (checkedId: z.infer<typeof offerIdSchema>) => void
 }
 
-function OfferRadioInput<T extends z.infer<typeof offerSchema>>({
-	trending = false,
-	...props
-}: OfferRadioInputProps<T>) {
-	const form = useFormContext<OfferFormValues>()
-
+function OfferRadioInput({ trending = false, ...props }: OfferRadioInputProps) {
 	return (
-		<FormField
-			control={form.control as any}
-			name='id'
-			render={({ field }) => (
-				<FormItem className='grid grid-cols-[1rem_1fr] border rounded-md p-3'>
-					<FormControl className='flex flex-row justify-start'>
-						<Input
-							className='h-min'
-							type='radio'
-							checked={field.value === props.offer.id}
-							{...field}
-							onChange={(event) => {
-								const { checked } = event.currentTarget
+		<div className='grid grid-cols-[1rem_1fr] border rounded-md p-3'>
+			<div className='flex flex-row justify-start'>
+				<Input
+					className='h-min'
+					type='radio'
+					checked={props.selectedId === props.offer.id}
+					onChange={(event) => {
+						const { checked } = event.currentTarget
 
-								if (checked) {
-									form.setValue('id', props.offer.id)
-									props.onCheck(props.offer.id)
-								}
-							}}
-						/>
-					</FormControl>
-					<div className='grid gap-1 grid-rows-[min-content_auto_min-content] font-normal'>
-						<FormLabel className='font-medium'>{props.label}</FormLabel>
-						<FormDescription className='text-muted-foreground text-xs leading-snug text-balance'>
-							{props.description}
-						</FormDescription>
-						{trending ? (
-							<div className='bg-green-200 border-green-700 rounded px-1 w-min mt-2'>
-								<p className='text-green-700 text-[.75rem] truncate font-medium'>
-									Trending{' '}
-									<TrendingUp
-										size={12}
-										className='inline'
-									/>
-								</p>
-							</div>
-						) : null}
+						if (checked) {
+							props.onSelect(props.offer.id)
+						}
+					}}
+				/>
+			</div>
+			<div className='grid gap-1 grid-rows-[min-content_auto_min-content] font-normal'>
+				<label className='font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+					{props.label}
+				</label>
+				<p className='text-muted-foreground text-xs leading-snug text-balance'>
+					{props.description}
+				</p>
+				{trending ? (
+					<div className='bg-green-200 border-green-700 rounded px-1 w-min mt-2'>
+						<p className='text-green-700 text-[.75rem] truncate font-medium'>
+							Trending{' '}
+							<TrendingUp
+								size={12}
+								className='inline'
+							/>
+						</p>
 					</div>
-				</FormItem>
-			)}
-		/>
+				) : null}
+			</div>
+		</div>
 	)
 }
