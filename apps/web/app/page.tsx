@@ -1,4 +1,4 @@
-import { Rocket, X } from 'lucide-react'
+import { Quote, Rocket, X } from 'lucide-react'
 import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -186,6 +186,99 @@ export default async function HomePage() {
 						thumbnailAlt='Demo Video'
 					/>
 				</div>
+
+				<div className='mt-12 md:mt-16 w-full max-w-5xl px-4'>
+					<div className='flex flex-col md:flex-row items-center gap-8 rounded-xl border bg-card p-6 md:p-8 shadow-sm'>
+						<div className='flex-1 flex flex-col items-center md:items-start text-center md:text-left'>
+							<h3 className='text-xl md:text-2xl font-bold text-accent-foreground mb-4'>
+								Transform content into presentations instantly
+							</h3>
+							<p className='text-muted-foreground text-base md:text-lg'>
+								Think of it as a pipeline: you input your documents or text, and
+								Slaidge outputs a formatted, professional presentation. You can
+								always use the chat to refine details or add more information
+								seamlessly.
+							</p>
+						</div>
+						<div className='flex-1 w-full'>
+							<img
+								src='/diagram-light.webp'
+								alt='How Slaidge works diagram'
+								className='w-full h-auto block dark:hidden rounded-lg'
+							/>
+							<img
+								src='/diagram-dark.webp'
+								alt='How Slaidge works diagram'
+								className='w-full h-auto hidden dark:block rounded-lg'
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div className='max-w-5xl mx-auto px-4 md:px-8 py-12'>
+				<div className='flex flex-col md:flex-row gap-8 items-center md:items-start'>
+					<img
+						src='/francisco.webp'
+						alt='Francisco'
+						className='w-32 h-32 md:w-48 md:h-48 rounded-full object-cover border-4 border-background shadow-lg'
+					/>
+					<div className='flex-1 space-y-4'>
+						<h3 className='text-2xl font-bold'>Hey, I’m Francisco 👋</h3>
+						<p className='text-muted-foreground'>
+							I’m a final-year computer science student who’s spent years
+							building software — APIs, AI tools, full SaaS apps. And throughout
+							my degree, I constantly had to create presentations packed with
+							technical details, data, and research.
+						</p>
+						<p className='text-muted-foreground'>
+							Every time, it felt the same: gather info from documents, rewrite
+							it into slides, fix the layout, repeat. Slow, repetitive, and not
+							exactly the best use of time.
+						</p>
+						<p className='text-muted-foreground'>So I built Slaidge.</p>
+						<p className='text-muted-foreground'>
+							Slaidge works like a pipeline: you drop in your text or documents,
+							and a structured, presentation-ready deck comes out the other
+							side. And with the built-in AI chat, you can keep feeding
+							information and Slaidge updates the slides instantly.
+						</p>
+						<div className='bg-accent/50 p-4 rounded-lg'>
+							<p className='font-semibold mb-2'>I built it to:</p>
+							<ul className='list-disc list-inside space-y-1 text-muted-foreground'>
+								<li>Save hours of formatting</li>
+								<li>Turn raw, dense information into clean slides</li>
+								<li>Let people focus on ideas, not slide mechanics</li>
+							</ul>
+						</div>
+						<p className='text-muted-foreground italic'>
+							Early users say it cuts their prep time drastically.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div className='max-w-xl mx-auto px-4 md:px-8 py-8 flex flex-col items-center'>
+				<div className='flex flex-col items-center md:items-start w-full relative'>
+					<Quote className='text-primary w-8 h-8 mb-4' />
+					<p className='text-lg md:text-xl font-medium text-center md:text-left mb-6 text-balance'>
+						“Huge time saver when I need to take information from my documents
+						to create slides.”
+					</p>
+					<div className='flex items-center gap-2.5 self-center md:self-start'>
+						<img
+							src='/feedback-avatar.webp'
+							alt='Gary'
+							className='w-10 h-10 rounded-full object-cover bg-muted'
+						/>
+						<div className='flex items-center gap-2.5'>
+							<span className='font-bold text-base'>Gary</span>
+							<span className='text-[10px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-wide'>
+								Professor
+							</span>
+						</div>
+					</div>
+				</div>
 			</div>
 			<BlurFade
 				inView
@@ -208,6 +301,7 @@ export default async function HomePage() {
 						title='Short term'
 						credits={25}
 						price='$2.99'
+						originalPrice='$5.99'
 						description='Ideal if you need to finish something now'
 						suggestion='Try the product with a minimum investment'
 						features={[
@@ -224,6 +318,7 @@ export default async function HomePage() {
 						title='Most popular 🔥'
 						credits={50}
 						price='$4.99'
+						originalPrice='$9.99'
 						description='If you have good work ahead'
 						suggestion='The best value for most users'
 						features={[
@@ -240,6 +335,7 @@ export default async function HomePage() {
 						title='High volume'
 						credits={150}
 						price='$14.99'
+						originalPrice='$24.99'
 						description='For very long jobs or teams'
 						suggestion='For high volume needs'
 						features={[

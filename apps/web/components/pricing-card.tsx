@@ -16,6 +16,7 @@ interface PricingCardProps {
 	description: string
 	suggestion: string
 	features: string[]
+	originalPrice?: string
 	variant: 'primary' | 'ghost'
 }
 
@@ -67,7 +68,14 @@ export default function PricingCard(props: PricingCardProps) {
 						{props.title}
 					</p>
 					<p className='text-2xl font-semibold mb-1'>{props.credits} credits</p>
-					<p className='text-3xl font-semibold mb-2'>{props.price}</p>
+					<div className='flex items-baseline gap-2 mb-2'>
+						{props.originalPrice && (
+							<span className='text-lg text-muted-foreground line-through'>
+								{props.originalPrice}
+							</span>
+						)}
+						<p className='text-3xl font-semibold'>{props.price}</p>
+					</div>
 					<p className='text-muted-foreground mb-4'>{props.description}</p>
 					<p className='text-sm p-1 bg-muted rounded text-nowrap'>
 						✨ {props.suggestion}
