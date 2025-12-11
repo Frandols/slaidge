@@ -175,7 +175,6 @@ async function postChat(
 			'* Before executing a tool, you must explain, as mentioned earlier, *in broad terms* ' +
 			'what you will do in that tool invocation.\n\n' +
 			'2. Processing requests.\n\n' +
-			'* Create a maximum of 5 slides per request.\n' +
 			'* When creating a new element (no matter which type), always use the current time in its ID, ' +
 			'current time is: "' +
 			Date.now() +
