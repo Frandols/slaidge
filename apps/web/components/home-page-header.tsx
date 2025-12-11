@@ -77,7 +77,7 @@ export default function HomePageHeader(props: HomePageHeaderProps) {
 						</div>
 					) : (
 						<div>
-							<BadgeLink href={'/log-in'}>Ingresar</BadgeLink>
+							<BadgeLink href={'/log-in'}>Login</BadgeLink>
 						</div>
 					)}
 					<div className='flex md:hidden ml-2'>
