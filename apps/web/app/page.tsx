@@ -1,4 +1,12 @@
-import { Quote, Rocket, X } from 'lucide-react'
+import {
+	ArrowRight,
+	Cog,
+	ImageIcon,
+	Quote,
+	Rocket,
+	Type,
+	X,
+} from 'lucide-react'
 import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -188,35 +196,74 @@ export default async function HomePage() {
 				</div>
 
 				<div className='mt-12 md:mt-16 w-full max-w-5xl px-4'>
-					<div className='flex flex-col md:flex-row items-center gap-8 rounded-xl border bg-card p-6 md:p-8 shadow-sm'>
-						<div className='flex-1 flex flex-col items-center md:items-start text-center md:text-left'>
-							<h3 className='text-xl md:text-2xl font-bold text-accent-foreground mb-4'>
-								Transform content into presentations instantly
-							</h3>
-							<p className='text-muted-foreground text-base md:text-lg'>
-								Think of it as a pipeline: you input your documents or text, and
-								Slaidge outputs a formatted, professional presentation. You can
-								always use the chat to refine details or add more information
-								seamlessly.
-							</p>
-						</div>
-						<div className='flex-1 w-full'>
-							<img
-								src='/diagram-light.webp'
-								alt='How Slaidge works diagram'
-								className='w-full h-auto block dark:hidden rounded-lg'
+					<div className='flex justify-center'>
+						<div className='flex flex-col md:flex-row items-center gap-6'>
+							<div className='w-64 rounded-2xl p-5 border border-border bg-muted/30 hover:bg-muted/50 transition-all duration-300'>
+								<div className='flex flex-col gap-4'>
+									<div className='w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary'>
+										<Type size={18} />
+									</div>
+									<div>
+										<h3 className='text-foreground font-semibold text-sm'>
+											Text or files input
+										</h3>
+										<p className='text-muted-foreground text-sm mt-1 leading-relaxed'>
+											Use raw text or PDF, DOCX, etc. to add information to your
+											presentation
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<ArrowRight
+								className='text-muted-foreground'
+								size={20}
 							/>
-							<img
-								src='/diagram-dark.webp'
-								alt='How Slaidge works diagram'
-								className='w-full h-auto hidden dark:block rounded-lg'
+
+							<div className='w-64 rounded-2xl p-5 border border-border bg-muted shadow-sm scale-105 transition-all duration-300'>
+								<div className='flex flex-col gap-4'>
+									<div className='w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary'>
+										<Cog size={18} />
+									</div>
+									<div>
+										<h3 className='text-foreground font-semibold text-sm'>
+											AI processing
+										</h3>
+										<p className='text-muted-foreground text-sm mt-1 leading-relaxed'>
+											AI processes your input and transforms it in editable
+											elements that you can interact with in Google Slides.
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<ArrowRight
+								className='text-muted-foreground'
+								size={20}
 							/>
+
+							<div className='w-64 rounded-2xl p-5 border border-border bg-muted/30 hover:bg-muted/50 transition-all duration-300'>
+								<div className='flex flex-col gap-4'>
+									<div className='w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary'>
+										<ImageIcon size={18} />
+									</div>
+									<div>
+										<h3 className='text-foreground font-semibold text-sm'>
+											Slide output
+										</h3>
+										<p className='text-muted-foreground text-sm mt-1 leading-relaxed'>
+											You get customizable slides that you can refine to have
+											the better presentation as possible
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className='max-w-5xl mx-auto px-4 md:px-8 py-12'>
+			<div className='max-w-5xl mt-12 mx-auto px-4 md:px-8 py-12'>
 				<div className='flex flex-col md:flex-row gap-8 items-center md:items-start'>
 					<img
 						src='/francisco.webp'
