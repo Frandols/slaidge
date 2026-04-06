@@ -11,7 +11,7 @@ export default function ConnectYourAccountDialog(
 	return (
 		<Dialog {...props}>
 			<DialogContent className='w-96'>
-				<DialogTitle>Connect your accound</DialogTitle>
+				<DialogTitle>Connect your account</DialogTitle>
 				<p className='text-muted-foreground text-sm'>
 					We need to add the presentations you create to your Google Slides
 					storage.
