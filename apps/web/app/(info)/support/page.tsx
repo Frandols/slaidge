@@ -14,7 +14,7 @@ export default function SupportPage() {
 		<>
 			<h1 className='text-3xl font-medium pb-6'>Support</h1>
 			<p className='leading-relaxed'>
-				1. Support email: <b className='underline'>support@slaidge.com</b>
+				1. Support email: <b className='underline'>slaidge.support@gmail.com</b>
 				<br />
 				<br />
 				<Link href={'https://discord.gg/QRXBubu2'}>
